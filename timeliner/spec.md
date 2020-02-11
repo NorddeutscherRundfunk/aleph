@@ -7,26 +7,6 @@
   defined set of collection this team has access to. I manage several timelines
   with access control.
 
-### Researcher Actions
-- [✓] search through documents
-- [✓] read documents
-- annotate sections / paragraphs
-- store findings
-- search through findings
-- filter, re-arrange findings
-- share selected findings
-- browse through my colleagues findings
-- browse archive findings
-
-### Editorial Manager Actions
-- [✓] Create collections
-- Create timelines and assign collection(s) to it
-- Invite collaborateurs to timeline(s)
-- Grant & Remove access to (outside) collaborateurs
-- Close / archive a timeline (mark as read-only)
-- [x] Define "event mappings" for specific timelines / investigations
-
-
 ## Stories
 
 As a researcher,
@@ -81,3 +61,23 @@ As an editorial manager,
 
 ## to discuss
 - Can researchers create their own timelines or are these exclusively managed from editorial managers?
+
+
+### Researcher Actions
+- [✓] search through documents
+- [✓] read documents
+- annotate sections / paragraphs
+- store findings
+- search through findings
+- filter, re-arrange findings
+- share selected findings
+- browse through my colleagues findings
+- browse archive findings
+
+### Editorial Manager Actions
+- [✓] Create collections
+- Create timelines and assign collection(s) to it
+- Invite collaborateurs to timeline(s)
+- Grant & Remove access to (outside) collaborateurs
+- Close / archive a timeline (mark as read-only)
+- Define "event mappings" for specific timelines / investigations
