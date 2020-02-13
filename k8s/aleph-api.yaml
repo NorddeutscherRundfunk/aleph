@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aleph-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aleph-api
+  template:
+    metadata:
+      labels:
+        deployment: aleph-api-deployment
+        app: aleph-api
+    spec:
+      containers:
+      - name: aleph-api
+        image: gcr.io/GKE_PROJECT/aleph:latest
+        command: ["gunicorn"]
+        args: ["-b 0.0.0.0:8000", "aleph.wsgi:app"]
+        env:
+          - name: ALEPH_DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: aleph-db-uri
+                key: ALEPH_DATABASE_URI
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - mountPath: "/data"
+            name: "data"
+      volumes:
+      - name: "data"
+        nfs:
+          server: nfs-server.default.svc.cluster.local
+          path: "/"
+          readOnly: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels:
+    app: aleph-api
+spec:
+  selector:
+    app: aleph-api
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000

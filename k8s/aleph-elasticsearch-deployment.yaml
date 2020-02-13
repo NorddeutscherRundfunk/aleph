@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aleph-elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        deployment: aleph-elasticsearch-deployment
+        app: elasticsearch
+    spec:
+      containers:
+      - name: aleph-elasticsearch
+        ports:
+          - containerPort: 9200
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+        image: gcr.io/GKE_PROJECT/aleph-elasticsearch:latest
+        volumeMounts:
+          - mountPath: "/usr/share/elasticsearch/data"
+            name: "data"
+        env:
+        - name: "discovery.type"
+          value:  "single-node"
+        - name: "ES_JAVA_OPTS"
+          value: "-Xms1g -Xmx1g"
+      volumes:
+       - name: "data"
+         persistentVolumeClaim:
+           claimName: "elasticsearch-data-disk"
