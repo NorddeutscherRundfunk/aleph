@@ -31,6 +31,10 @@ const messages = defineMessages({
     id: 'dashboard.diagrams',
     defaultMessage: 'Network diagrams',
   },
+  timelines: {
+    id: 'dashboard.timelines',
+    defaultMessage: 'Timelines',
+  },
   settings: {
     id: 'dashboard.settings',
     defaultMessage: 'Settings',
@@ -69,7 +73,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { alerts, intl, location, groups, showDiagrams } = this.props;
+    const { alerts, intl, location, groups, showDiagrams, showTimelines } = this.props;
     const current = location.pathname;
 
     return (
@@ -124,6 +128,14 @@ class Dashboard extends React.Component {
                 active={current === '/diagrams'}
               />
             )}
+            {showTimelines && (
+              <MenuItem
+                icon="timeline-events"
+                text={intl.formatMessage(messages.timelines)}
+                onClick={() => this.navigate('/timelines')}
+                active={current === '/timelines'}
+              />
+            )}
             { groups.total > 0 && (
               <>
                 <MenuDivider />
@@ -170,8 +182,9 @@ const mapStateToProps = (state) => {
   const alerts = selectAlerts(state);
   const groups = selectGroups(state);
   const showDiagrams = selectSessionIsTester(state);
+  const showTimelines = selectSessionIsTester(state);
 
-  return { alerts, groups, showDiagrams };
+  return { alerts, groups, showDiagrams, showTimelines };
 };
 
 Dashboard = injectIntl(Dashboard);

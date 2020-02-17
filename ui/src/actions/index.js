@@ -33,6 +33,13 @@ export {
   updateDiagram,
 } from './diagramActions';
 export {
+  createTimeline,
+  deleteTimeline,
+  fetchTimeline,
+  queryTimelines,
+  updateTimeline,
+} from './timelineActions';
+export {
   createEntity,
   deleteEntity,
   fetchEntity,
