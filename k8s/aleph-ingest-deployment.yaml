@@ -17,7 +17,7 @@ spec:
       - name: ingest-file
         image: gcr.io/GKE_PROJECT/ingest-file:latest
         env:
-          - name: ALEPH_DATABASE_URI
+          - name: BALKHASH_DATABASE_URI
             valueFrom:
               secretKeyRef:
                 name: aleph-db-uri
