@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'dashboard.diagrams',
     defaultMessage: 'Network diagrams',
   },
+  timelines: {
+    id: 'dashboard.timelines',
+    defaultMessage: 'Timelines',
+  },
   settings: {
     id: 'dashboard.settings',
     defaultMessage: 'Settings',
@@ -70,7 +74,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { alerts, intl, location, groupsResult, showDiagrams } = this.props;
+    const { alerts, intl, location, groups, showDiagrams, showTimelines } = this.props;
     const current = location.pathname;
 
     return (
@@ -125,7 +129,19 @@ class Dashboard extends React.Component {
                 active={current === '/diagrams'}
               />
             )}
+<<<<<<< HEAD
             {(groupsResult.isPending || groupsResult.total > 0) && (
+=======
+            {showTimelines && (
+              <MenuItem
+                icon="timeline-events"
+                text={intl.formatMessage(messages.timelines)}
+                onClick={() => this.navigate('/timelines')}
+                active={current === '/timelines'}
+              />
+            )}
+            { groups.total > 0 && (
+>>>>>>> Add basic frontend logic to create/edit/delete/browse Timelines
               <>
                 <MenuDivider />
                 <li className={c('bp3-menu-header', { [Classes.SKELETON]: groupsResult.isPending })}>
@@ -170,6 +186,7 @@ class Dashboard extends React.Component {
   }
 }
 
+<<<<<<< HEAD
 const mapStateToProps = (state, ownProps) => {
   const groupsQuery = queryGroups(ownProps.location);
   return {
@@ -178,6 +195,15 @@ const mapStateToProps = (state, ownProps) => {
     alerts: selectAlerts(state),
     showDiagrams: selectTester(state),
   };
+=======
+const mapStateToProps = (state) => {
+  const alerts = selectAlerts(state);
+  const groups = selectGroups(state);
+  const showDiagrams = selectSessionIsTester(state);
+  const showTimelines = selectSessionIsTester(state);
+
+  return { alerts, groups, showDiagrams, showTimelines };
+>>>>>>> Add basic frontend logic to create/edit/delete/browse Timelines
 };
 
 Dashboard = injectIntl(Dashboard);

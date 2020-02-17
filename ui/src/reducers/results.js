@@ -8,6 +8,7 @@ import {
   queryCollections,
   queryDiagrams,
   queryRoles,
+  queryTimelines,
   queryEntities,
   queryNotifications,
   queryCollectionXref,
@@ -62,4 +63,11 @@ export default createReducer({
     error, args: { query },
   }) => resultLoadError(state, query, error),
 
+  [queryTimelines.START]: (state, { query }) => resultLoadStart(state, query),
+
+  [queryTimelines.ERROR]: (state, {
+    error, args: { query },
+  }) => resultLoadError(state, query, error),
+
+  [queryTimelines.COMPLETE]: updateResults,
 }, initialState);

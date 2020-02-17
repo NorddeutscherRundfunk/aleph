@@ -10,10 +10,19 @@ import { Count } from 'src/components/common';
 import CollectionOverviewMode from 'src/components/Collection/CollectionOverviewMode';
 import CollectionXrefMode from 'src/components/Collection/CollectionXrefMode';
 import CollectionDiagramsIndexMode from 'src/components/Collection/CollectionDiagramsIndexMode';
+import CollectionTimelinesIndexMode from 'src/components/Collection/CollectionTimelinesIndexMode';
 import CollectionContentViews from 'src/components/Collection/CollectionContentViews';
 
 import { queryCollectionDiagrams, queryCollectionXrefFacets } from 'src/queries';
-import { selectModel, selectDiagramsResult, selectCollectionXrefResult, selectTester } from 'src/selectors';
+import {
+  selectCollectionXrefIndex,
+  selectCollectionXrefResult,
+  selectTester,
+  selectModel,
+  selectDiagramsResult,
+  selectTimelinesResult,
+  selectSessionIsTester,
+} from 'src/selectors';
 
 import './CollectionViews.scss';
 
@@ -22,6 +31,7 @@ const viewIds = {
   BROWSE: 'browse',
   XREF: 'xref',
   DIAGRAMS: 'diagrams',
+  TIMELINES: 'timelines',
 };
 
 /* eslint-disable */
@@ -80,7 +90,17 @@ class CollectionViews extends React.Component {
 
   render() {
     const {
+<<<<<<< HEAD
       collection, activeMode, diagrams, showDiagramsTab, xref,
+=======
+      collection,
+      activeMode,
+      diagrams,
+      timelines,
+      showDiagramsTab,
+      showTimelinesTab,
+      xrefIndex,
+>>>>>>> Add basic frontend logic to create/edit/delete/browse Timelines
     } = this.props;
     // const numOfDocs = this.countDocuments();
     // const entitySchemata = this.getEntitySchemata();
@@ -98,8 +118,12 @@ class CollectionViews extends React.Component {
           title={
             <>
               <Icon icon="grouped-bar-chart" className="left-icon" />
-              <FormattedMessage id="entity.info.overview" defaultMessage="Overview" />
-            </>}
+              <FormattedMessage
+                id="entity.info.overview"
+                defaultMessage="Overview"
+              />
+            </>
+          }
           panel={<CollectionOverviewMode collection={collection} />}
         />
         <Tab
@@ -108,9 +132,19 @@ class CollectionViews extends React.Component {
           title={
             <>
               <Icon icon="inbox-search" className="left-icon" />
-              <FormattedMessage id="entity.info.contents" defaultMessage="Browse" />
-            </>}
-          panel={<CollectionContentViews collection={collection} activeMode={activeMode} onChange={this.handleTabChange} />}
+              <FormattedMessage
+                id="entity.info.contents"
+                defaultMessage="Browse"
+              />
+            </>
+          }
+          panel={
+            <CollectionContentViews
+              collection={collection}
+              activeMode={activeMode}
+              onChange={this.handleTabChange}
+            />
+          }
         />
         <Tab
           id={viewIds.XREF}
@@ -118,23 +152,64 @@ class CollectionViews extends React.Component {
           title={
             <>
               <Icon className="left-icon" icon="comparison" />
+<<<<<<< HEAD
               <FormattedMessage id="entity.info.xref" defaultMessage="Cross-reference" />
               <Count count={xref.total} />
             </>}
           panel={<CollectionXrefMode collection={collection} />}
+=======
+              <FormattedMessage
+                id="entity.info.xref"
+                defaultMessage="Cross-reference"
+              />
+              <Count count={xrefIndex.total} />
+            </TextLoading>
+          }
+          panel={<CollectionXrefIndexMode collection={collection} />}
+>>>>>>> Add basic frontend logic to create/edit/delete/browse Timelines
         />
         {showDiagramsTab && (
           <Tab
             id={viewIds.DIAGRAMS}
             className="CollectionViews__tab"
             title={
+<<<<<<< HEAD
               <>
                 <Icon className="left-icon" icon="graph" />
                 <FormattedMessage id="collection.info.diagrams" defaultMessage="Network diagrams" />
+=======
+              <TextLoading loading={diagrams.shouldLoad || diagrams.isLoading}>
+                {' '}
+                <Icon className="left-icon" icon="graph" />
+                <FormattedMessage
+                  id="collection.info.diagrams"
+                  defaultMessage="Network diagrams"
+                />
+>>>>>>> Add basic frontend logic to create/edit/delete/browse Timelines
                 <Count count={diagrams.total} />
               </>
             }
             panel={<CollectionDiagramsIndexMode collection={collection} />}
+          />
+        )}
+        {showTimelinesTab && (
+          <Tab
+            id={viewIds.TIMELINES}
+            className="CollectionViews__tab"
+            title={
+              <TextLoading
+                loading={timelines.shouldLoad || timelines.isLoading}
+              >
+                {' '}
+                <Icon className="left-icon" icon="timeline-events" />
+                <FormattedMessage
+                  id="collection.info.timelines"
+                  defaultMessage="Timelines"
+                />
+                <Count count={timelines.total} />
+              </TextLoading>
+            }
+            panel={<CollectionTimelinesIndexMode collection={collection} />}
           />
         )}
       </Tabs>
@@ -142,17 +217,32 @@ class CollectionViews extends React.Component {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
   const { collection, location } = ownProps;
   const diagramsQuery = queryCollectionDiagrams(location, collection.id);
   const xrefQuery = queryCollectionXrefFacets(location, collection.id);
 
+  const context = {
+    'filter:collection_id': collection.id,
+  };
+  const diagramsQuery = new Query('diagrams', {}, context, 'diagrams').sortBy(
+    'updated_at',
+    'desc'
+  );
+  const timelinesQuery = new Query(
+    'timelines',
+    {},
+    context,
+    'timelines'
+  ).sortBy('updated_at', 'desc');
+
   return {
     model: selectModel(state),
     xref: selectCollectionXrefResult(state, xrefQuery),
     diagrams: selectDiagramsResult(state, diagramsQuery),
-    showDiagramsTab: collection.casefile && selectTester(state),
+    timelines: selectTimelinesResult(state, timelinesQuery),
+    showDiagramsTab: collection.casefile && selectSessionIsTester(state),
+    showTimelinesTab: collection.casefile && selectSessionIsTester(state),
   };
 };
 

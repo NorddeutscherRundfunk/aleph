@@ -24,6 +24,9 @@ import CollectionIndexScreen from 'src/screens/CollectionIndexScreen/CollectionI
 import CollectionScreen from 'src/screens/CollectionScreen/CollectionScreen';
 import DiagramScreen from 'src/screens/DiagramScreen/DiagramScreen';
 import DiagramIndexScreen from 'src/screens/DiagramIndexScreen/DiagramIndexScreen';
+import TimelineScreen from 'src/screens/TimelineScreen/TimelineScreen';
+import TimelineIndexScreen from 'src/screens/TimelineIndexScreen/TimelineIndexScreen';
+import CollectionXrefMatchesScreen from 'src/screens/CollectionXrefMatchesScreen/CollectionXrefMatchesScreen';
 import EntityScreen from 'src/screens/EntityScreen/EntityScreen';
 
 
@@ -68,6 +71,8 @@ class Router extends Component {
           <Redirect from="/datasets/:collectionId/xref/:otherId" to="/datasets/:collectionId?filter:match_collection_id=:otherId#mode=xref" />
           <Route path="/diagrams/:diagramId" exact component={DiagramScreen} />
           <Route path="/diagrams" exact component={DiagramIndexScreen} />
+          <Route path="/timelines/:timelineId" exact component={TimelineScreen} />
+          <Route path="/timelines" exact component={TimelineIndexScreen} />
           <Route path="/search" exact component={SearchScreen} />
           <Route path="/notifications" exact component={NotificationsScreen} />
           <Route path="/history" exact component={HistoryScreen} />

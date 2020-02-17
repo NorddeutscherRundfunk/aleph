@@ -121,6 +121,10 @@ export function selectDiagram(state, diagramId) {
   return selectObject(state, state.diagrams, diagramId);
 }
 
+export function selectTimeline(state, timelineId) {
+  return selectObject(state, state.timelines, timelineId);
+}
+
 export function selectDocumentContent(state, documentId) {
   return selectObject(state, state.documentContent, documentId);
 }
@@ -152,6 +156,10 @@ export function selectNotificationsResult(state, query) {
 
 export function selectDiagramsResult(state, query) {
   return selectResult(state, query, selectDiagram);
+}
+
+export function selectTimelinesResult(state, query) {
+  return selectResult(state, query, selectTimeline);
 }
 
 export function selectEntityTags(state, entityId) {

@@ -6,6 +6,22 @@ import { queryCollectionDiagrams, queryCollectionXrefFacets } from 'src/queries'
 import { fetchCollection, fetchCollectionStatus, queryCollectionXref, queryDiagrams, mutate } from 'src/actions';
 import { selectCollection, selectCollectionStatus, selectCollectionXrefResult, selectDiagramsResult } from 'src/selectors';
 
+import Query from 'src/app/Query';
+import {
+  fetchCollection,
+  fetchCollectionStatus,
+  fetchCollectionXrefIndex,
+  queryDiagrams,
+  queryTimelines,
+  mutate,
+} from 'src/actions';
+import {
+  selectCollection,
+  selectCollectionStatus,
+  selectCollectionXrefIndex,
+  selectDiagramsResult,
+  selectTimelinesResult,
+} from 'src/selectors';
 
 class CollectionContextLoader extends PureComponent {
   constructor(props) {
@@ -37,6 +53,14 @@ class CollectionContextLoader extends PureComponent {
 
   fetchIfNeeded() {
     const { collectionId, collection, status } = this.props;
+      collectionId,
+      collection,
+      status,
+      diagramsQuery,
+      diagramsResult,
+      timelinesQuery,
+      timelinesResult,
+    } = this.props;
 
     if (collection.shouldLoad) {
       this.props.fetchCollection({ id: collectionId });
@@ -55,18 +79,21 @@ class CollectionContextLoader extends PureComponent {
     if (diagramsResult.shouldLoad) {
       this.props.queryDiagrams({ query: diagramsQuery });
     }
+
+    if (timelinesResult.shouldLoad) {
+      this.props.queryTimelines({ query: timelinesQuery });
+    }
   }
 
   fetchStatus() {
     const { collectionId } = this.props;
     clearTimeout(this.timeout);
-    this.props.fetchCollectionStatus({ id: collectionId })
-      .finally(() => {
-        const { status } = this.props;
-        const duration = status.pending === 0 ? 6000 : 2000;
-        clearTimeout(this.timeout);
-        this.timeout = setTimeout(this.fetchStatus, duration);
-      });
+    this.props.fetchCollectionStatus({ id: collectionId }).finally(() => {
+      const { status } = this.props;
+      const duration = status.pending === 0 ? 6000 : 2000;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(this.fetchStatus, duration);
+    });
   }
 
   render() {
@@ -74,11 +101,29 @@ class CollectionContextLoader extends PureComponent {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
+<<<<<<< HEAD
   const { collectionId, location } = ownProps;
   const diagramsQuery = queryCollectionDiagrams(location, collectionId);
   const xrefQuery = queryCollectionXrefFacets(location, collectionId);
+=======
+  const { collectionId } = ownProps;
+
+  const context = {
+    'filter:collection_id': collectionId,
+  };
+  const diagramsQuery = new Query('diagrams', {}, context, 'diagrams').sortBy(
+    'updated_at',
+    'desc',
+  );
+  const timelinesQuery = new Query(
+    'timelines',
+    {},
+    context,
+    'timelines',
+  ).sortBy('updated_at', 'desc');
+
+>>>>>>> Add basic frontend logic to create/edit/delete/browse Timelines
   return {
     collection: selectCollection(state, collectionId),
     status: selectCollectionStatus(state, collectionId),
@@ -86,6 +131,8 @@ const mapStateToProps = (state, ownProps) => {
     xrefResult: selectCollectionXrefResult(state, xrefQuery),
     diagramsQuery,
     diagramsResult: selectDiagramsResult(state, diagramsQuery),
+    timelinesQuery,
+    timelinesResult: selectTimelinesResult(state, timelinesQuery),
   };
 };
 
@@ -95,6 +142,7 @@ const mapDispatchToProps = {
   fetchCollectionStatus,
   queryCollectionXref,
   queryDiagrams,
+  queryTimelines,
 };
 export default compose(
   withRouter,
