@@ -18,6 +18,7 @@ from aleph.views.archive_api import blueprint as archive_api
 from aleph.views.status_api import blueprint as status_api
 from aleph.views.mappings_api import blueprint as mappings_api
 from aleph.views.diagrams_api import blueprint as diagrams_api
+from aleph.views.timelines_api import blueprint as timelines_api
 
 
 def mount_app_blueprints(app):
@@ -40,4 +41,5 @@ def mount_app_blueprints(app):
     app.register_blueprint(status_api)
     app.register_blueprint(mappings_api)
     app.register_blueprint(diagrams_api)
+    app.register_blueprint(timelines_api)
     signals.register_blueprints.send(app=app)

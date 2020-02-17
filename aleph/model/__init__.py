@@ -11,3 +11,4 @@ from aleph.model.notification import Notification  # noqa
 from aleph.model.query_log import QueryLog  # noqa
 from aleph.model.mapping import Mapping  # noqa
 from aleph.model.diagram import Diagram # noqa
+from aleph.model.timeline import Timeline # noqa

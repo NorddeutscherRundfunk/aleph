@@ -319,7 +319,7 @@ class MappingSerializer(Serializer):
     pass
 
 
-class DiagramEntitySerializer(EntitySerializer):
+class CaseFileItemEntitySerializer(EntitySerializer):
 
     def _serialize(self, obj):
         pk = obj.get('id')
@@ -335,7 +335,7 @@ class DiagramEntitySerializer(EntitySerializer):
             if values:
                 properties[prop.name] = []
                 for value in values:
-                    entity = self.resolve(Entity, value, DiagramEntitySerializer)  # noqa
+                    entity = self.resolve(Entity, value, CaseFileItemEntitySerializer)  # noqa
                     if entity is None:
                         entity = value
                     properties[prop.name].append(entity)
@@ -345,7 +345,7 @@ class DiagramEntitySerializer(EntitySerializer):
         return self._clean_response(obj)
 
 
-class DiagramSerializer(Serializer):
+class CaseFileItemSerializer(Serializer):
 
     def _collect(self, obj):
         self.queue(Collection, obj.get('collection_id'))
@@ -362,7 +362,7 @@ class DiagramSerializer(Serializer):
         ent_ids = obj.pop('entities')
         obj['entities'] = []
         for ent_id in ent_ids:
-            entity = self.resolve(Entity, ent_id, DiagramEntitySerializer)
+            entity = self.resolve(Entity, ent_id, CaseFileItemEntitySerializer)
             if entity is not None:
                 obj['entities'].append(entity)
         for ent in obj['entities']:
@@ -375,6 +375,14 @@ class DiagramSerializer(Serializer):
                 if values:
                     properties[prop.name] = []
                     for value in values:
-                        entity = self.resolve(Entity, value, DiagramEntitySerializer)  # noqa
+                        entity = self.resolve(Entity, value, CaseFileItemEntitySerializer)  # noqa
                         properties[prop.name].append(entity)
         return self._clean_response(obj)
+
+
+class DiagramSerializer(CaseFileItemSerializer):
+    pass
+
+
+class TimelineSerializer(CaseFileItemSerializer):
+    pass
