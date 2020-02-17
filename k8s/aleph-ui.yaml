@@ -18,6 +18,12 @@ spec:
         image: gcr.io/GKE_PROJECT/aleph-ui-production:latest
         ports:
           - containerPort: 8080
+        env:
+          - name: ALEPH_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aleph-secret
+                key: ALEPH_SECRET_KEY
 ---
 apiVersion: v1
 kind: Service

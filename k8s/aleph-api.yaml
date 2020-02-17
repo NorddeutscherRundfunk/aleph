@@ -24,6 +24,11 @@ spec:
               secretKeyRef:
                 name: aleph-db-uri
                 key: ALEPH_DATABASE_URI
+          - name: ALEPH_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aleph-secret
+                key: ALEPH_SECRET_KEY
         ports:
           - containerPort: 8000
         volumeMounts:
