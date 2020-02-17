@@ -84,6 +84,11 @@ spec_tags = [
         'x-displayName': 'VIS Diagrams API',
     },
     {
+        'description': 'Create and manage Timeliner events.',
+        'name': 'Timeline',
+        'x-displayName': 'Timeliner API',
+    },
+    {
         'description': 'Create and manage alerts.',
         'name': 'Alert',
         'x-displayName': 'Alerts API',
