@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aleph-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aleph-ui
+  template:
+    metadata:
+      labels:
+        deployment: aleph-ui-deployment
+        app: aleph-ui
+    spec:
+      containers:
+      - name: aleph-ui
+        image: gcr.io/GKE_PROJECT/aleph-ui-production:latest
+        ports:
+          - containerPort: 8080
+        env:
+          - name: ALEPH_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aleph-secret
+                key: ALEPH_SECRET_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aleph-ui
+  labels:
+    app: aleph-ui
+spec:
+  selector:
+    app: aleph-ui
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: aleph-ui-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: aleph-ui
+          servicePort: 8080
+

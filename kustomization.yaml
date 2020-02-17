@@ -1,0 +1,14 @@
+# Example configuration for the webserver
+# at https://github.com/monopole/hello
+
+resources:
+- k8s/aleph-data-storage.yaml
+- k8s/nfs-server.yaml
+- k8s/aleph-elasticsearch-deployment.yaml
+- k8s/aleph-elasticsearch-storage.yaml
+- k8s/aleph-elasticsearch-service.yaml
+- k8s/aleph-redis.yaml
+- k8s/aleph-ingest-deployment.yaml
+- k8s/aleph-worker-deployment.yaml
+- k8s/aleph-api.yaml
+- k8s/aleph-ui.yaml

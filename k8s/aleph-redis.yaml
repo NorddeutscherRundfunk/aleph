@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aleph-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        deployment: aleph-redis-deployment
+        app: redis
+    spec:
+      containers:
+      - name: aleph-redis
+        image: redis:alpine
+        ports:
+          - containerPort: 6379
+        command: ["redis-server", "--appendonly", "yes"]
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+  selector:
+    app: redis
+
