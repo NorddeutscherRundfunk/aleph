@@ -23,6 +23,11 @@ spec:
               secretKeyRef:
                 name: aleph-db-uri
                 key: ALEPH_DATABASE_URI
+          - name: BALKHASH_DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: aleph-db-uri
+                key: ALEPH_DATABASE_URI
           - name: ALEPH_SECRET_KEY
             valueFrom:
               secretKeyRef:
