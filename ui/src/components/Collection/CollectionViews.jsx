@@ -11,9 +11,16 @@ import { Count, TextLoading } from 'src/components/common';
 import CollectionOverviewMode from 'src/components/Collection/CollectionOverviewMode';
 import CollectionXrefIndexMode from 'src/components/Collection/CollectionXrefIndexMode';
 import CollectionDiagramsIndexMode from 'src/components/Collection/CollectionDiagramsIndexMode';
+import CollectionTimelinesIndexMode from 'src/components/Collection/CollectionTimelinesIndexMode';
 import CollectionContentViews from 'src/components/Collection/CollectionContentViews';
 
-import { selectCollectionXrefIndex, selectModel, selectDiagramsResult, selectSessionIsTester } from 'src/selectors';
+import {
+  selectCollectionXrefIndex,
+  selectModel,
+  selectDiagramsResult,
+  selectTimelinesResult,
+  selectSessionIsTester,
+} from 'src/selectors';
 
 import './CollectionViews.scss';
 
@@ -22,6 +29,7 @@ const viewIds = {
   BROWSE: 'browse',
   XREF: 'xref',
   DIAGRAMS: 'diagrams',
+  TIMELINES: 'timelines',
 };
 
 /* eslint-disable */
@@ -80,7 +88,13 @@ class CollectionViews extends React.Component {
 
   render() {
     const {
-      collection, activeMode, diagrams, showDiagramsTab, xrefIndex,
+      collection,
+      activeMode,
+      diagrams,
+      timelines,
+      showDiagramsTab,
+      showTimelinesTab,
+      xrefIndex,
     } = this.props;
     // const numOfDocs = this.countDocuments();
     // const entitySchemata = this.getEntitySchemata();
@@ -98,8 +112,12 @@ class CollectionViews extends React.Component {
           title={
             <>
               <Icon icon="grouped-bar-chart" className="left-icon" />
-              <FormattedMessage id="entity.info.overview" defaultMessage="Overview" />
-            </>}
+              <FormattedMessage
+                id="entity.info.overview"
+                defaultMessage="Overview"
+              />
+            </>
+          }
           panel={<CollectionOverviewMode collection={collection} />}
         />
         <Tab
@@ -108,9 +126,19 @@ class CollectionViews extends React.Component {
           title={
             <>
               <Icon icon="inbox-search" className="left-icon" />
-              <FormattedMessage id="entity.info.contents" defaultMessage="Browse" />
-            </>}
-          panel={<CollectionContentViews collection={collection} activeMode={activeMode} onChange={this.handleTabChange} />}
+              <FormattedMessage
+                id="entity.info.contents"
+                defaultMessage="Browse"
+              />
+            </>
+          }
+          panel={
+            <CollectionContentViews
+              collection={collection}
+              activeMode={activeMode}
+              onChange={this.handleTabChange}
+            />
+          }
         />
         <Tab
           id={viewIds.XREF}
@@ -118,9 +146,13 @@ class CollectionViews extends React.Component {
           title={
             <TextLoading loading={xrefIndex.shouldLoad || xrefIndex.isLoading}>
               <Icon className="left-icon" icon="comparison" />
-              <FormattedMessage id="entity.info.xref" defaultMessage="Cross-reference" />
+              <FormattedMessage
+                id="entity.info.xref"
+                defaultMessage="Cross-reference"
+              />
               <Count count={xrefIndex.total} />
-            </TextLoading>}
+            </TextLoading>
+          }
           panel={<CollectionXrefIndexMode collection={collection} />}
         />
         {showDiagramsTab && (
@@ -128,12 +160,37 @@ class CollectionViews extends React.Component {
             id={viewIds.DIAGRAMS}
             className="CollectionViews__tab"
             title={
-              <TextLoading loading={diagrams.shouldLoad || diagrams.isLoading}>                <Icon className="left-icon" icon="graph" />
-                <FormattedMessage id="collection.info.diagrams" defaultMessage="Network diagrams" />
+              <TextLoading loading={diagrams.shouldLoad || diagrams.isLoading}>
+                {' '}
+                <Icon className="left-icon" icon="graph" />
+                <FormattedMessage
+                  id="collection.info.diagrams"
+                  defaultMessage="Network diagrams"
+                />
                 <Count count={diagrams.total} />
               </TextLoading>
             }
             panel={<CollectionDiagramsIndexMode collection={collection} />}
+          />
+        )}
+        {showTimelinesTab && (
+          <Tab
+            id={viewIds.TIMELINES}
+            className="CollectionViews__tab"
+            title={
+              <TextLoading
+                loading={timelines.shouldLoad || timelines.isLoading}
+              >
+                {' '}
+                <Icon className="left-icon" icon="timeline-events" />
+                <FormattedMessage
+                  id="collection.info.timelines"
+                  defaultMessage="Timelines"
+                />
+                <Count count={timelines.total} />
+              </TextLoading>
+            }
+            panel={<CollectionTimelinesIndexMode collection={collection} />}
           />
         )}
       </Tabs>
@@ -141,21 +198,30 @@ class CollectionViews extends React.Component {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
   const { collection } = ownProps;
 
   const context = {
     'filter:collection_id': collection.id,
   };
-  const diagramsQuery = new Query('diagrams', {}, context, 'diagrams')
-    .sortBy('updated_at', 'desc');
+  const diagramsQuery = new Query('diagrams', {}, context, 'diagrams').sortBy(
+    'updated_at',
+    'desc'
+  );
+  const timelinesQuery = new Query(
+    'timelines',
+    {},
+    context,
+    'timelines'
+  ).sortBy('updated_at', 'desc');
 
   return {
     model: selectModel(state),
     xrefIndex: selectCollectionXrefIndex(state, collection.id),
     diagrams: selectDiagramsResult(state, diagramsQuery),
+    timelines: selectTimelinesResult(state, timelinesQuery),
     showDiagramsTab: collection.casefile && selectSessionIsTester(state),
+    showTimelinesTab: collection.casefile && selectSessionIsTester(state),
   };
 };
 

@@ -7,6 +7,7 @@ import {
 import {
   queryCollections,
   queryDiagrams,
+  queryTimelines,
   queryEntities,
   queryNotifications,
 } from 'src/actions';
@@ -43,4 +44,12 @@ export default createReducer({
   }) => resultLoadError(state, query, error),
 
   [queryDiagrams.COMPLETE]: updateResults,
+
+  [queryTimelines.START]: (state, { query }) => resultLoadStart(state, query),
+
+  [queryTimelines.ERROR]: (state, {
+    error, args: { query },
+  }) => resultLoadError(state, query, error),
+
+  [queryTimelines.COMPLETE]: updateResults,
 }, initialState);

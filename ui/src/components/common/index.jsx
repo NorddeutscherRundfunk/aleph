@@ -26,6 +26,7 @@ import URL from './URL';
 import SearchBox from './SearchBox';
 import SearchListings from './SearchListings';
 import Summary from './Summary';
+import Timeline from './Timeline';
 import QueryText from './QueryText';
 import ResultCount from './ResultCount';
 
@@ -53,6 +54,7 @@ export {
   SinglePane,
   SortableTH,
   Summary,
+  Timeline,
   Count,
   Tag,
   URL,
