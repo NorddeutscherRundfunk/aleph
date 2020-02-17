@@ -19,6 +19,8 @@ spec:
         command: ["gunicorn"]
         args: ["-b 0.0.0.0:8000", "aleph.wsgi:app"]
         env:
+          - name: ALEPH_UI_URL
+            value: http://34.95.115.88
           - name: ALEPH_DATABASE_URI
             valueFrom:
               secretKeyRef:
