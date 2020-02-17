@@ -2,9 +2,10 @@ import { PureComponent } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { queryCollectionDiagrams, queryCollectionXrefFacets } from 'src/queries';
-import { fetchCollection, queryCollectionXref, queryDiagrams, mutate } from 'src/actions';
-import { selectCollection, selectCollectionStatus, selectCollectionXrefResult, selectDiagramsResult } from 'src/selectors';
+
+import { queryCollectionDiagrams, queryCollectionTimelines, queryCollectionXrefFacets } from 'src/queries';
+import { fetchCollection, queryCollectionXref, queryDiagrams, queryTimelines, mutate } from 'src/actions';
+import { selectCollection, selectCollectionStatus, selectCollectionXrefResult, selectDiagramsResult, selectTimelinesResult } from 'src/selectors';
 
 
 class CollectionContextLoader extends PureComponent {
@@ -41,6 +42,11 @@ class CollectionContextLoader extends PureComponent {
     if (diagramsResult.shouldLoad) {
       this.props.queryDiagrams({ query: diagramsQuery });
     }
+
+    const { timelinesQuery, timelinesResult } = this.props;
+    if (timelinesResult.shouldLoad) {
+      this.props.queryTimelines({ query: timelinesQuery });
+    }
   }
 
   render() {
@@ -48,10 +54,10 @@ class CollectionContextLoader extends PureComponent {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
   const { collectionId, location } = ownProps;
   const diagramsQuery = queryCollectionDiagrams(location, collectionId);
+  const timelinesQuery = queryCollectionTimelines(location, collectionId);
   const xrefQuery = queryCollectionXrefFacets(location, collectionId);
   return {
     collection: selectCollection(state, collectionId),
@@ -60,6 +66,8 @@ const mapStateToProps = (state, ownProps) => {
     xrefResult: selectCollectionXrefResult(state, xrefQuery),
     diagramsQuery,
     diagramsResult: selectDiagramsResult(state, diagramsQuery),
+    timelinesQuery,
+    timelinesResult: selectTimelinesResult(state, timelinesQuery),
   };
 };
 
@@ -68,6 +76,7 @@ const mapDispatchToProps = {
   fetchCollection,
   queryCollectionXref,
   queryDiagrams,
+  queryTimelines,
 };
 
 export default compose(

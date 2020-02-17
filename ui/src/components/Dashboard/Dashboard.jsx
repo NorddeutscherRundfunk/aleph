@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'dashboard.diagrams',
     defaultMessage: 'Network diagrams',
   },
+  timelines: {
+    id: 'dashboard.timelines',
+    defaultMessage: 'Timelines',
+  },
   settings: {
     id: 'dashboard.settings',
     defaultMessage: 'Settings',
@@ -70,7 +74,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { alerts, intl, location, groupsResult, showDiagrams } = this.props;
+    const { alerts, intl, location, groupsResult, showDiagrams, showTimelines } = this.props;
     const current = location.pathname;
 
     return (
@@ -125,6 +129,14 @@ class Dashboard extends React.Component {
                 active={current === '/diagrams'}
               />
             )}
+            {showTimelines && (
+              <MenuItem
+                icon="timeline-events"
+                text={intl.formatMessage(messages.timelines)}
+                onClick={() => this.navigate('/timelines')}
+                active={current === '/timelines'}
+              />
+            )}
             {(groupsResult.isPending || groupsResult.total > 0) && (
               <>
                 <MenuDivider />
@@ -177,6 +189,7 @@ const mapStateToProps = (state, ownProps) => {
     groupsResult: selectRolesResult(state, groupsQuery),
     alerts: selectAlerts(state),
     showDiagrams: selectTester(state),
+    showTimelines: selectTester(state),
   };
 };
 

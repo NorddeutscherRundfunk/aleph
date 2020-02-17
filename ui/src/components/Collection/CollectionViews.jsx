@@ -11,9 +11,17 @@ import CollectionDocumentsMode from 'src/components/Collection/CollectionDocumen
 import CollectionEntitiesMode from 'src/components/Collection/CollectionEntitiesMode';
 import CollectionXrefMode from 'src/components/Collection/CollectionXrefMode';
 import CollectionDiagramsIndexMode from 'src/components/Collection/CollectionDiagramsIndexMode';
+import CollectionTimelinesIndexMode from 'src/components/Collection/CollectionTimelinesIndexMode';
 import collectionViewIds from 'src/components/Collection/collectionViewIds';
-import { queryCollectionDiagrams, queryCollectionXrefFacets } from 'src/queries';
-import { selectModel, selectDiagramsResult, selectCollectionXrefResult, selectTester } from 'src/selectors';
+
+import { queryCollectionDiagrams, queryCollectionTimelines, queryCollectionXrefFacets } from 'src/queries';
+import {
+  selectCollectionXrefResult,
+  selectTester,
+  selectModel,
+  selectDiagramsResult,
+  selectTimelinesResult,
+} from 'src/selectors';
 
 import './CollectionViews.scss';
 
@@ -46,8 +54,8 @@ class CollectionViews extends React.Component {
 
   render() {
     const {
-      collection, activeMode, diagrams, xref,
-      showDiagramsTab, showEntitiesTab, showDocumentsTab,
+      collection, activeMode, diagrams, timelines, xref,
+      showDiagramsTab, showEntitiesTab, showDocumentsTab, showTimelinesTab,
       documentTabCount, entitiesTabCount
     } = this.props;
     return (
@@ -64,8 +72,12 @@ class CollectionViews extends React.Component {
           title={
             <>
               <Icon icon="grouped-bar-chart" className="left-icon" />
-              <FormattedMessage id="entity.info.overview" defaultMessage="Overview" />
-            </>}
+              <FormattedMessage
+                id="entity.info.overview"
+                defaultMessage="Overview"
+              />
+            </>
+          }
           panel={<CollectionOverviewMode collection={collection} />}
         />
         {showDocumentsTab && (
@@ -103,9 +115,23 @@ class CollectionViews extends React.Component {
                 <Icon className="left-icon" icon="graph" />
                 <FormattedMessage id="collection.info.diagrams" defaultMessage="Network diagrams" />
                 <Count count={diagrams.total} />
-              </>
+            </>
             }
             panel={<CollectionDiagramsIndexMode collection={collection} />}
+          />
+        )}
+        {showTimelinesTab && (
+          <Tab
+            id={collectionViewIds.TIMELINES}
+            className="CollectionViews__tab"
+            title={
+              <>
+                <Icon className="left-icon" icon="timeline-events" />
+                <FormattedMessage id="collection.info.timelines" defaultMessage="Timelines" />
+                <Count count={timelines.total} />
+            </>
+            }
+            panel={<CollectionTimelinesIndexMode collection={collection} />}
           />
         )}
         <Tab
@@ -124,11 +150,11 @@ class CollectionViews extends React.Component {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
   const { collection, location } = ownProps;
   const model = selectModel(state);
   const diagramsQuery = queryCollectionDiagrams(location, collection.id);
+  const timelinesQuery = queryCollectionTimelines(location, collection.id);
   const xrefQuery = queryCollectionXrefFacets(location, collection.id);
   const schemata = collection?.statistics?.schema?.values || [];
   let documentTabCount = 0, entitiesTabCount = 0;
@@ -146,10 +172,12 @@ const mapStateToProps = (state, ownProps) => {
     entitiesTabCount: entitiesTabCount,
     documentTabCount: documentTabCount,
     showDiagramsTab: collection.casefile && selectTester(state),
+    showTimelinesTab: collection.casefile && selectTester(state),
     showEntitiesTab: collection.casefile,
     showDocumentsTab: (documentTabCount > 0 || collection.writeable),
     xref: selectCollectionXrefResult(state, xrefQuery),
     diagrams: selectDiagramsResult(state, diagramsQuery),
+    timelines: selectTimelinesResult(state, timelinesQuery),
   };
 };
 

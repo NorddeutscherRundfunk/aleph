@@ -29,6 +29,13 @@ export function queryCollectionDiagrams(location, collectionId) {
   return Query.fromLocation('diagrams', location, context, 'diagrams');
 }
 
+export function queryCollectionTimelines(location, collectionId) {
+  const context = {
+    'filter:collection_id': collectionId,
+  };
+  return Query.fromLocation('timelines', location, context, 'timelines');
+}
+
 export function queryCollectionXrefFacets(location, collectionId, contextId) {
   const path = `collections/${collectionId}/xref`;
   let query = Query.fromLocation(path, location, {}, 'xref');
