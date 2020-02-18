@@ -15,7 +15,9 @@ jobs:
   docker-ui:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        ref: 'feature/timeliner'
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
@@ -32,7 +34,9 @@ jobs:
   docker-elasticsearch:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        ref: 'feature/timeliner'
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
@@ -50,7 +54,9 @@ jobs:
   docker-ingest-file:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        ref: 'feature/timeliner'
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
@@ -66,7 +72,9 @@ jobs:
   docker-aleph:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        ref: 'feature/timeliner'
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
@@ -84,7 +92,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: ["docker-ingest-file","docker-elasticsearch", "docker-ui","docker-aleph"]
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        ref: 'feature/timeliner'
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
