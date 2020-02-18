@@ -1,4 +1,4 @@
-FROM node:13
+FROM node:13 as builder
 
 RUN mkdir /alephui
 WORKDIR /alephui
@@ -15,4 +15,9 @@ COPY public /alephui/public
 COPY src /alephui/src
 
 ENV REACT_APP_API_ENDPOINT /api/2/
-# RUN npm run build
+
+RUN npm run build
+
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /alephui/build /assets
