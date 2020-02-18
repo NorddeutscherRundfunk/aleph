@@ -113,3 +113,9 @@ jobs:
         ./kustomize edit set image gcr.io/GKE_PROJECT/aleph:latest=gcr.io/$GKE_PROJECT/aleph:$GITHUB_SHA
         ./kustomize edit set image gcr.io/GKE_PROJECT/aleph-ui-production:latest=gcr.io/$GKE_PROJECT/aleph-ui-production:$GITHUB_SHA
         ./kustomize build . | kubectl apply --validate=false -f -
+    - name: Notify slack
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      uses: pullreminders/slack-action@master
+      with:
+        args: '{\"channel\":\"TCC1E6L3W\",\"text\":\"new Aleph version deployed\"}'
