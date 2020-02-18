@@ -113,9 +113,11 @@ jobs:
         ./kustomize edit set image gcr.io/GKE_PROJECT/aleph:latest=gcr.io/$GKE_PROJECT/aleph:$GITHUB_SHA
         ./kustomize edit set image gcr.io/GKE_PROJECT/aleph-ui-production:latest=gcr.io/$GKE_PROJECT/aleph-ui-production:$GITHUB_SHA
         ./kustomize build . | kubectl apply --validate=false -f -
-    - name: Notify slack
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: pullreminders/slack-action@master
+    - uses: 8398a7/action-slack@v2
       with:
-        args: '{\"channel\":\"TCC1E6L3W\",\"text\":\"new Aleph version deployed\"}'
+        status: ${{ job.status }}
+        author_name: Github Bot # default: 8398a7@action-slack
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      if: always() # Pick up events even if the job fails or is canceled.
