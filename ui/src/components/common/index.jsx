@@ -32,6 +32,7 @@ import Summary from './Summary';
 import Timeline from './Timeline';
 import QueryText from './QueryText';
 import ResultCount from './ResultCount';
+import FuzzyDatePicker from './FuzzyDatePicker';
 
 export {
   Breadcrumbs,
@@ -68,4 +69,5 @@ export {
   SortingBar,
   QueryText,
   ResultCount,
+  FuzzyDatePicker,
 };

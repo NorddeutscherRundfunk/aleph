@@ -1,0 +1,19 @@
+@import "src/app/variables.scss";
+
+.FuzzyDatePicker {
+  background: white;
+  padding-top: $aleph-grid-size;
+
+  &__title {
+    padding: $aleph-grid-size;
+    font-weight: bold;
+  }
+
+  .FuzzyDatePrecision {
+    padding: $aleph-grid-size;
+
+    &__tag {
+      margin-right: 10px;
+    }
+  }
+}
