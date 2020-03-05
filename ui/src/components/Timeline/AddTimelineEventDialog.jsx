@@ -4,9 +4,9 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-// import { showSuccessToast, showWarningToast } from 'src/app/toast';
+import { showSuccessToast, showWarningToast } from 'src/app/toast';
 import Query from 'src/app/Query';
-import { queryTimelines, createTimelineEvent } from 'src/actions';
+import { queryTimelines, updateTimeline, createEntity } from 'src/actions';
 import { selectTimelinesResult } from 'src/selectors';
 
 import TimelineEventForm from './TimelineEventForm';
@@ -67,21 +67,36 @@ export class AddTimelineEventDialog extends Component {
   }
 
   async onSave(timelineEvent) { // eslint-disable-line
-    console.log(timelineEvent); // eslint-disable-line
-    // const { intl } = this.props;
-    // const { blocking } = this.state;
-    // if (blocking) return;
-    // this.setState({ blocking: true });
+    const { intl, document } = this.props;
+    const { blocking } = this.state;
+    if (blocking) return;
+    this.setState({ blocking: true });
 
-    // try {
-    //   await this.props.createTimelineEvent(timelineEvent);
-    //   showSuccessToast(intl.formatMessage(messages.save_success));
-    //   this.props.toggleDialog();
-    //   this.setState({ blocking: false });
-    // } catch (e) {
-    //   showWarningToast(e.message);
-    //   this.setState({ blocking: false });
-    // }
+    // FIXME use right model implementation?
+    const entity = {
+      schema: 'Event',
+      properties: timelineEvent,
+      collection: document.collection,
+    };
+
+    // FIXME implementation?
+    try {
+      const entityData = await this.props.createEntity(entity);
+      const { timeline } = timelineEvent;
+      timeline.entities = [entityData.id];
+      try {
+        await this.props.updateTimeline(timeline.id, timeline);
+        showSuccessToast(intl.formatMessage(messages.save_success));
+        this.setState({ blocking: false });
+        this.props.toggleDialog();
+      } catch (e) {
+        showWarningToast(e.message);
+        this.setState({ blocking: false });
+      }
+    } catch (e) {
+      showWarningToast(e.message);
+      this.setState({ blocking: false });
+    }
   }
 
   fetchIfNeeded() {
@@ -130,7 +145,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = { createTimelineEvent, queryTimelines };
+const mapDispatchToProps = { queryTimelines, createEntity, updateTimeline };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
