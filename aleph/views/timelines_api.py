@@ -1,5 +1,5 @@
 import logging
-from banal import ensure_list
+from banal import ensure_list, as_bool
 from flask import Blueprint, request
 
 from aleph.core import db
@@ -17,8 +17,10 @@ log = logging.getLogger(__name__)
 
 @blueprint.route('/api/2/timelines', methods=['GET'])
 def index():
-    # TODO doc
     """Returns a list of timelines for the role
+
+    if no collection_id is given, return all timelines that
+    the role can access
     ---
     get:
       summary: List timelines
@@ -26,10 +28,16 @@ def index():
       - description: The collection id.
         in: query
         name: 'filter:collection_id'
-        required: true
+        required: false
         schema:
           minimum: 1
           type: integer
+      - description: Writeable flag
+        in: query
+        name: 'filter:writeable'
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
           content:
@@ -48,8 +56,9 @@ def index():
         - Timeline
     """
     parser = QueryParser(request.args, request.authz)
-    q = Timeline.by_authz(request.authz)
     collection_ids = ensure_list(parser.filters.get('collection_id'))
+    writeable = as_bool(parser.filters.get('writeable'))
+    q = Timeline.by_authz(request.authz, writeable)
     if len(collection_ids):
         q = q.filter(Timeline.collection_id.in_(collection_ids))
     result = DatabaseQueryResult(request, q)
@@ -58,7 +67,6 @@ def index():
 
 @blueprint.route('/api/2/timelines', methods=['POST', 'PUT'])
 def create():
-    # TODO doc
     """Create a timeline.
     ---
     post:
@@ -95,7 +103,6 @@ def create():
 
 @blueprint.route('/api/2/timelines/<int:timeline_id>', methods=['GET'])
 def view(timeline_id):
-    # TODO doc
     """Return the timeline with id `timeline_id`.
     ---
     get:
@@ -126,7 +133,6 @@ def view(timeline_id):
 
 @blueprint.route('/api/2/timelines/<int:timeline_id>', methods=['POST', 'PUT'])
 def update(timeline_id):
-    # TODO doc
     """Update the timeline with id `timeline_id`.
     ---
     post:
@@ -166,7 +172,6 @@ def update(timeline_id):
 
 @blueprint.route('/api/2/timelines/<int:timeline_id>', methods=['DELETE'])
 def delete(timeline_id):
-    # TODO doc
     """Delete a timeline.
     ---
     delete:
