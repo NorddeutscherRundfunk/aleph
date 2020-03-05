@@ -57,8 +57,8 @@ class Timeline(db.Model, SoftDeleteModel):
         return data
 
     @classmethod
-    def by_authz(cls, authz):
-        ids = authz.collections(authz.READ)
+    def by_authz(cls, authz, writeable=False):
+        ids = authz.collections(authz.WRITE if writeable else authz.READ)
         q = cls.all()
         q = q.filter(cls.collection_id.in_(ids))
         return q
