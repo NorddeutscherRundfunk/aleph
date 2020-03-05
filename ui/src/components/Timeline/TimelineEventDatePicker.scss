@@ -1,0 +1,19 @@
+@import "src/app/variables.scss";
+
+.TimelineEventDatePicker {
+  &__value {
+    display: block;
+  }
+
+  &__switch {
+    padding-left: $aleph-grid-size;
+    display: inline-block;
+  }
+
+  &__date-range {
+    .FuzzyDatePicker {
+      width: 45%;
+      display: inline-block;
+    }
+  }
+}

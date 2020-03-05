@@ -1,7 +1,10 @@
+/* eslint-disable */
+
 import React, { lazy } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
 import Query from 'src/app/Query';
 import DefaultViewer from 'src/viewers/DefaultViewer';
 import CSVStreamViewer from 'src/viewers/CsvStreamViewer';
@@ -18,6 +21,18 @@ const PdfViewer = lazy(() => import(/* webpackChunkName: 'base' */ 'src/viewers/
 
 
 export class DocumentViewMode extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      addTimelineEventIsOpen: false
+    };
+    this.toggleAddTimelineEvent = this.toggleAddTimelineEvent.bind(this);
+  }
+
+  toggleAddTimelineEvent() {
+    this.setState(({ addTimelineEventIsOpen }) => ({addTimelineEventIsOpen: !addTimelineEventIsOpen}));
+  }
+
   renderContent() {
     const { document, queryText, activeMode } = this.props;
     const processingError = document.getProperty('processingError');
@@ -106,14 +121,24 @@ export class DocumentViewMode extends React.Component {
   }
 
   render() {
-    const { document } = this.props;
+    const { document, location } = this.props;
+    const { addTimelineEventIsOpen } = this.state;
     if (document.isLoading || document.shouldLoad) {
       return null;
     }
 
     return (
       <div className="DocumentViewMode">
+        <button className="bp3-button bp3-intent-primary" onClick={this.toggleAddTimelineEvent}>
+          Add timeline event
+        </button>
         {this.renderContent()}
+        <AddTimelineEventDialog
+          document={document}
+          location={location}
+          toggleDialog={this.toggleAddTimelineEvent}
+          isOpen={addTimelineEventIsOpen}
+        />
       </div>
     );
   }
