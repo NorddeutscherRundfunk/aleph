@@ -67,23 +67,25 @@ export class AddTimelineEventDialog extends Component {
   }
 
   async onSave(timelineEvent) { // eslint-disable-line
-    const { intl, document } = this.props;
+    const { intl } = this.props;
     const { blocking } = this.state;
     if (blocking) return;
     this.setState({ blocking: true });
 
     // FIXME use right model implementation?
+    const { timeline } = timelineEvent;
     const entity = {
       schema: 'Event',
-      properties: timelineEvent,
-      collection: document.collection,
+      properties: { ...timelineEvent, label: timelineEvent.name },
+      collection: timelineEvent.timeline.collection,
     };
+    entity.properties.timeline = undefined;
 
     // FIXME implementation?
     try {
       const entityData = await this.props.createEntity(entity);
-      const { timeline } = timelineEvent;
-      timeline.entities = [entityData.id];
+      const entities = timeline.entities ? timeline.entities.map(e => e.id) : [];
+      timeline.entities = [...entities, entityData.id];
       try {
         await this.props.updateTimeline(timeline.id, timeline);
         showSuccessToast(intl.formatMessage(messages.save_success));

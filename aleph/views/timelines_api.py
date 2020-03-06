@@ -4,7 +4,6 @@ from flask import Blueprint, request
 
 from aleph.core import db
 from aleph.model import Timeline
-from aleph.logic.entities import upsert_entity
 from aleph.search import QueryParser, DatabaseQueryResult
 from aleph.views.serializers import TimelineSerializer
 from aleph.views.util import get_nested_collection, get_db_collection
@@ -88,14 +87,6 @@ def create():
     """
     data = parse_request('TimelineCreate')
     collection = get_nested_collection(data, request.authz.WRITE)
-    old_to_new_id_map = {}
-    entity_ids = []
-    for entity in data.pop('entities', []):
-        old_id = entity.get('id')
-        new_id = upsert_entity(entity, collection, sync=True)
-        old_to_new_id_map[old_id] = new_id
-        entity_ids.append(new_id)
-    data['entities'] = entity_ids
     timeline = Timeline.create(data, collection, request.authz.id)
     db.session.commit()
     return TimelineSerializer.jsonify(timeline)
