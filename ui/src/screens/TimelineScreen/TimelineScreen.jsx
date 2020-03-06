@@ -8,13 +8,12 @@ import { Intent } from '@blueprintjs/core';
 
 import { fetchTimeline } from 'src/actions';
 import { selectTimeline } from 'src/selectors';
-import Screen from 'src/components/Screen/Screen';
 import TimelineManageMenu from 'src/components/Timeline/TimelineManageMenu';
-import TimelineEditor from 'src/components/Timeline/TimelineEditor';
 import LoadingScreen from 'src/components/Screen/LoadingScreen';
 import ErrorScreen from 'src/components/Screen/ErrorScreen';
-import { Breadcrumbs, Collection, Timeline } from 'src/components/common';
 import timelineUpdateStates from 'src/components/Timeline/timelineUpdateStates';
+
+import TimelineScreenInner from './TimelineScreenInner';
 
 const messages = defineMessages({
   status_success: {
@@ -44,12 +43,10 @@ export class TimelineScreen extends Component {
     super(props);
 
     this.state = {
-      filterText: '',
       updateStatus: null,
     };
 
     this.onCollectionSearch = this.onCollectionSearch.bind(this);
-    this.onTimelineSearch = this.onTimelineSearch.bind(this);
     this.onStatusChange = this.onStatusChange.bind(this);
   }
 
@@ -69,31 +66,8 @@ export class TimelineScreen extends Component {
     });
   }
 
-  onTimelineSearch(filterText) {
-    this.setState({ filterText });
-  }
-
   onStatusChange(updateStatus) {
     this.setState({ updateStatus });
-  }
-
-  getSearchScopes() {
-    const { timeline } = this.props;
-    const scopes = [
-      {
-        listItem: <Collection.Label collection={timeline.collection} icon truncate={30} />,
-        label: timeline.collection.label,
-        onSearch: this.onCollectionSearch,
-      },
-      {
-        listItem: <Timeline.Label timeline={timeline} icon truncate={30} />,
-        label: timeline.label,
-        onSearch: this.onTimelineSearch,
-        submitOnQueryChange: true,
-      },
-    ];
-
-    return scopes;
   }
 
   fetchIfNeeded() {
@@ -120,7 +94,7 @@ export class TimelineScreen extends Component {
 
   render() {
     const { timeline, intl } = this.props;
-    const { filterText, updateStatus } = this.state;
+    const { updateStatus } = this.state;
 
     if (timeline.isError) {
       return <ErrorScreen error={timeline.error} />;
@@ -134,14 +108,7 @@ export class TimelineScreen extends Component {
       <TimelineManageMenu timeline={timeline} />
     );
 
-    const breadcrumbs = (
-      <Breadcrumbs operation={operation} status={this.formatStatus()}>
-        <Breadcrumbs.Collection key="collection" collection={timeline.collection} />
-        <Breadcrumbs.Text active>
-          <Timeline.Label timeline={timeline} icon />
-        </Breadcrumbs.Text>
-      </Breadcrumbs>
-    );
+    const status = this.formatStatus();
 
     return (
       <>
@@ -153,18 +120,11 @@ export class TimelineScreen extends Component {
           when={updateStatus === timelineUpdateStates.ERROR}
           message={intl.formatMessage(messages.error_warning)}
         />
-        <Screen
-          title={timeline.label}
-          description={timeline.summary || ''}
-          searchScopes={this.getSearchScopes()}
-        >
-          {breadcrumbs}
-          <TimelineEditor
-            timeline={timeline}
-            filterText={filterText}
-            onStatusChange={this.onStatusChange}
-          />
-        </Screen>
+        <TimelineScreenInner
+          timeline={timeline}
+          timelineOperations={operation}
+          timelineStatus={status}
+        />
       </>
     );
   }
