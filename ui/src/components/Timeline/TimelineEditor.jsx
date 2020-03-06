@@ -3,18 +3,20 @@ import { connect } from 'react-redux';
 import { updateTimeline } from 'src/actions';
 import { selectLocale, selectModel } from 'src/selectors';
 
+import TimelineEventSearch from './TimelineEventSearch';
+
 import './TimelineEditor.scss';
 
 class TimelineEditor extends React.Component {
   render() {
-    const { timeline, filterText } = this.props;
+    const { timeline } = this.props;
 
     return (
       <div className="TimelineEditor">
         <h1>
           {timeline.label}
         </h1>
-        {filterText}
+        <TimelineEventSearch collection={timeline.collection} />
       </div>
     );
   }
