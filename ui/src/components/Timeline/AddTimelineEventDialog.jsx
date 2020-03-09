@@ -7,9 +7,10 @@ import { connect } from 'react-redux';
 import { showSuccessToast, showWarningToast } from 'src/app/toast';
 import Query from 'src/app/Query';
 import { queryTimelines, updateTimeline, createEntity } from 'src/actions';
-import { selectTimelinesResult } from 'src/selectors';
+import { selectTimelinesResult, selectModel } from 'src/selectors';
 
 import TimelineEventForm from './TimelineEventForm';
+import { getEntity } from './util';
 
 import './AddTimelineEventDialog.scss';
 
@@ -66,25 +67,23 @@ export class AddTimelineEventDialog extends Component {
     }
   }
 
-  async onSave(timelineEvent) { // eslint-disable-line
-    const { intl } = this.props;
+  async onSave(timelineEvent) {
+    const { intl, model } = this.props;
     const { blocking } = this.state;
     if (blocking) return;
     this.setState({ blocking: true });
 
-    // FIXME use right model implementation?
     const { timeline } = timelineEvent;
-    const entity = {
-      schema: 'Event',
-      properties: { ...timelineEvent, label: timelineEvent.name },
-      collection: timelineEvent.timeline.collection,
-    };
-    entity.properties.timeline = undefined;
+    const entity = getEntity(
+      model,
+      timelineEvent,
+      timelineEvent.timeline.collection,
+    );
 
     // FIXME implementation?
     try {
       const entityData = await this.props.createEntity(entity);
-      const entities = timeline.entities ? timeline.entities.map(e => e.id) : [];
+      const entities = timeline.entities ? timeline.entities.map((e) => e.id) : [];
       timeline.entities = [...entities, entityData.id];
       try {
         await this.props.updateTimeline(timeline.id, timeline);
@@ -134,16 +133,21 @@ export class AddTimelineEventDialog extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { location } = ownProps;
-  const query = Query.fromLocation('timelines', location, {
-    'filter:writeable': true,
-  }, 'timelines')
-    .sortBy('updated_at', 'desc');
+  const context = { 'filter:writeable': true };
+  const query = Query.fromLocation(
+    'timelines',
+    location,
+    context,
+    'timelines',
+  ).sortBy('updated_at', 'desc');
 
   const timelines = selectTimelinesResult(state, query);
+  const model = selectModel(state);
 
   return {
     query,
     timelines,
+    model,
   };
 };
 
