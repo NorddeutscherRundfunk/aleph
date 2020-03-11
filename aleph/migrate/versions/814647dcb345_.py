@@ -32,8 +32,6 @@ def upgrade():
     )
     op.create_index(op.f('ix_timeline_collection_id'), 'timeline', ['collection_id'], unique=False)
     op.create_index(op.f('ix_timeline_role_id'), 'timeline', ['role_id'], unique=False)
-    op.drop_table('balkhash_collection_1')
-    op.drop_column('diagram', 'data')
     op.alter_column('role', 'is_muted',
                existing_type=sa.BOOLEAN(),
                nullable=False)
@@ -45,15 +43,6 @@ def downgrade():
     op.alter_column('role', 'is_muted',
                existing_type=sa.BOOLEAN(),
                nullable=True)
-    op.add_column('diagram', sa.Column('data', postgresql.JSONB(astext_type=sa.Text()), autoincrement=False, nullable=True))
-    op.create_table('balkhash_collection_1',
-    sa.Column('id', sa.VARCHAR(), autoincrement=False, nullable=True),
-    sa.Column('fragment', sa.VARCHAR(), autoincrement=False, nullable=False),
-    sa.Column('properties', postgresql.JSONB(astext_type=sa.Text()), autoincrement=False, nullable=True),
-    sa.Column('schema', sa.VARCHAR(), autoincrement=False, nullable=True),
-    sa.Column('timestamp', postgresql.TIMESTAMP(), autoincrement=False, nullable=True),
-    sa.UniqueConstraint('id', 'fragment', name='balkhash_collection_1_id_fragment_key')
-    )
     op.drop_index(op.f('ix_timeline_role_id'), table_name='timeline')
     op.drop_index(op.f('ix_timeline_collection_id'), table_name='timeline')
     op.drop_table('timeline')
