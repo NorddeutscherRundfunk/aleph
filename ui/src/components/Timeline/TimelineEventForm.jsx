@@ -75,6 +75,7 @@ export class TimelineEventForm extends Component {
 
     this.possibleInvolvedEntities = getPossibleInvolvedEntities(props.document);
     this.onFieldChange = this.onFieldChange.bind(this);
+    this.handleBoolChange = this.handleBoolChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
     this.handleTimelineSelect = this.handleTimelineSelect.bind(this);
     this.handleInvolvedChange = this.handleInvolvedChange.bind(this);
@@ -87,8 +88,15 @@ export class TimelineEventForm extends Component {
     this.setState(data);
   }
 
+  handleBoolChange({ target }) {
+    const data = this.state;
+    data[target.id] = target.checked;
+    this.setState(data);
+  }
+
   handleDateRangeChange({ date, startDate, endDate }) {
     if (date) this.setState({ date, startDate, endDate });
+    // set date to empty when we have a range
     if (startDate) this.setState({ startDate, date });
     if (endDate) this.setState({ endDate, date });
   }
@@ -174,9 +182,9 @@ export class TimelineEventForm extends Component {
         >
           <Checkbox
             id="important"
-            checked={data.important}
+            checked={!!data.important}
             label={intl.formatMessage(messages.label_important_checkbox)}
-            onChange={this.onFieldChange}
+            onChange={this.handleBoolChange}
           />
         </FormGroup>
         <Button
