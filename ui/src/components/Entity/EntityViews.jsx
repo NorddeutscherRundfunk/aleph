@@ -58,6 +58,7 @@ class EntityViews extends React.Component {
     const hasViewMode = entity.schema.isDocument() && hasDocumentViewMode;
     const refs = !references.results ? [] : references.results.filter(ref => !ref.reverse.hidden);
     const processingError = entity.getProperty('processingError');
+    const canAddTimelineEvent = hasDocumentViewMode && !isPreview;
 
     return (
       <Tabs
@@ -181,6 +182,18 @@ class EntityViews extends React.Component {
               </>
             )}
             panel={<EntityMappingMode entity={entity} />}
+          />
+        )}
+        {canAddTimelineEvent && (
+          <Tab
+            id="events"
+            title={(
+              <>
+                <Icon icon="timeline-events" className="left-icon" />
+                <FormattedMessage id="entity.timeline.view" defaultMessage="Timeline events" />
+              </>
+            )}
+            panel={<h1>Events</h1>}
           />
         )}
       </Tabs>
