@@ -89,7 +89,7 @@ export class TimelineEventForm extends Component {
 
   handleBoolChange({ target }) {
     const data = this.state;
-    data[target.id] = target.checked;
+    data[target.id] = target.checked ? 'true' : 'false'; // FIXME schema boolean implementation
     this.setState(data);
   }
 
@@ -185,7 +185,7 @@ export class TimelineEventForm extends Component {
         >
           <Checkbox
             id="important"
-            checked={!!data.important}
+            checked={(data.important === 'true') || (data.important === true)}
             label={intl.formatMessage(messages.label_important_checkbox)}
             onChange={this.handleBoolChange}
           />
