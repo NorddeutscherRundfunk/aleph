@@ -60,12 +60,6 @@ const messages = defineMessages({
   },
 });
 
-// FIXME use EntityTags implementation?
-const getPossibleInvolvedEntities = document => (
-  [...document.getProperty('peopleMentioned'),
-    ...document.getProperty('companiesMentioned')]
-);
-
 export class TimelineEventForm extends Component {
   constructor(props) {
     super(props);
@@ -77,7 +71,7 @@ export class TimelineEventForm extends Component {
     this.handleBoolChange = this.handleBoolChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
     this.handleTimelineSelect = this.handleTimelineSelect.bind(this);
-    this.handleInvolvedChange = this.handleInvolvedChange.bind(this);
+    this.handleMentionedChange = this.handleMentionedChange.bind(this);
     this.onSave = () => this.props.onSave(this.state);
   }
 
@@ -100,8 +94,10 @@ export class TimelineEventForm extends Component {
     if (endDate) this.setState({ endDate, date });
   }
 
-  handleInvolvedChange(involved) {
-    this.setState({ involved });
+  handleMentionedChange(prefix, mentioned) {
+    const data = this.state;
+    data[`${prefix}Mentioned`] = mentioned;
+    this.setState(data);
   }
 
   handleTimelineSelect(timeline) {
@@ -160,9 +156,14 @@ export class TimelineEventForm extends Component {
             helperText={intl.formatMessage(messages.help_involved)}
           >
             <TimelineEventInvolvedEntities
-              selectedEntities={data.involved}
-              entities={getPossibleInvolvedEntities(document)}
-              onChange={this.handleInvolvedChange}
+              selectedEntities={data.peopleMentioned || []}
+              entities={[...document.getProperty('peopleMentioned')]}
+              onChange={(selected) => this.handleMentionedChange('people', selected)}
+            />
+            <TimelineEventInvolvedEntities
+              selectedEntities={data.companiesMentioned || []}
+              entities={[...document.getProperty('companiesMentioned')]}
+              onChange={(selected) => this.handleMentionedChange('companies', selected)}
             />
           </FormGroup>
         )}
