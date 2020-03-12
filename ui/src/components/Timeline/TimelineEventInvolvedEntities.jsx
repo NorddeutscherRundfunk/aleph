@@ -26,10 +26,10 @@ export default class TimelineEventInvolvedEntities extends Component {
       selected: props.selectedEntities || [],
     };
 
-    this.onEntityToggle = this.onEntityToggle.bind(this);
+    this.handleEntityToggle = this.handleEntityToggle.bind(this);
   }
 
-  onEntityToggle(entity) {
+  handleEntityToggle(entity) {
     const { selected } = this.state;
     const { onChange } = this.props;
     const ix = selected.indexOf(entity);
@@ -50,7 +50,7 @@ export default class TimelineEventInvolvedEntities extends Component {
         {entities.map(entity => renderEntity(
           entity,
           selected.indexOf(entity) > -1,
-          () => this.onEntityToggle(entity),
+          () => this.handleEntityToggle(entity),
         ))}
       </div>
     );
