@@ -1,0 +1,49 @@
+@import "src/app/variables.scss";
+
+.TimelineEventTable {
+  border-color: $aleph-border-color;
+  .schema {
+    max-width: 8em;
+    @media screen and (max-width: $aleph-screen-md-max-width) {
+      display: none;
+    }
+  }
+
+  .updating {
+    opacity: 0.4;
+  }
+
+  .bp3-control {
+    margin-bottom: 0 !important;
+  }
+
+  .bp3-control-indicator {
+    margin-left: 0px !important;
+  }
+}
+
+.TimelineEventTableRow {
+  &.active {
+    em {
+      background: inherit;
+    }
+  }
+
+  em {
+    background: $aleph-text-highlight-color;
+    font-style: normal;
+  }
+}
+
+//medium and small screen
+@media screen and (max-width: $aleph-screen-md-max-width) {
+  .TimelineEventTable {
+    .header-country, .header-dates, .header-size {
+      display: none;
+    }
+
+    .country, .date, .file-size {
+      display: none;
+    }
+  }
+}
