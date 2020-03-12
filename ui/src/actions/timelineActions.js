@@ -27,3 +27,5 @@ export const deleteTimeline = asyncActionCreator((timelineId) => async () => {
   await endpoint.delete(`timelines/${timelineId}`);
   return { timelineId };
 }, { name: 'DELETE_TIMELINE' });
+
+export const queryTimelineEvents = asyncActionCreator(query => async () => queryEndpoint(query), { name: 'QUERY_TIMELINE_EVENTS' });

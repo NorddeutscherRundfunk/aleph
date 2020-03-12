@@ -311,7 +311,8 @@ const mapStateToProps = (state, ownProps) => {
     'filter:schema': 'Event',
     'filter:collection_id': timeline.collection.id,
   };
-  const query = Query.fromLocation('entities', location, context, '');
+  const path = `timelines/${timeline.id}/events`;
+  const query = Query.fromLocation(path, location, context, 'events');
   const result = selectEntitiesResult(state, query);
   return { query, result };
 };
