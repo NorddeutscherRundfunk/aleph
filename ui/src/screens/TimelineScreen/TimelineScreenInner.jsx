@@ -15,14 +15,13 @@ import {
   Collection, DualPane, SectionLoading, SignInCallout,
   ErrorSection, Breadcrumbs, ResultCount, Timeline,
 } from 'src/components/common';
-import EntityTable from 'src/components/EntityTable/EntityTable';
 import SearchFacets from 'src/components/Facet/SearchFacets';
 import QueryTags from 'src/components/QueryTags/QueryTags';
 import SuggestAlert from 'src/components/SuggestAlert/SuggestAlert';
 import Screen from 'src/components/Screen/Screen';
 import togglePreview from 'src/util/togglePreview';
 
-// import './SearchScreen.scss';
+import TimelineEventTable from 'src/components/Timeline/TimelineEventTable';
 
 const messages = defineMessages({
   no_results_title: {
@@ -188,13 +187,14 @@ export class TimelineScreenInner extends React.Component {
 
   render() {
     const { query, result, intl, timeline, timelineOperations, timelineStatus } = this.props;
-    const { hideFacets } = this.state;
+    const { hideFacets, facets } = this.state;
     const title = query.getString('q') || intl.formatMessage(messages.page_title);
     const hideFacetsClass = hideFacets ? 'show' : 'hide';
     const plusMinusIcon = hideFacets ? 'minus' : 'plus';
     const hasExportLink = result && result.links && result.links.export;
     const exportLink = !hasExportLink ? null : result.links.export;
     const tooltip = intl.formatMessage(messages.alert_export_disabled);
+    const hideCollection = facets.indexOf('collection_id') < 0;
 
     const operation = (
       <>
@@ -267,7 +267,7 @@ export class TimelineScreenInner extends React.Component {
                 query={query}
                 result={result}
                 updateQuery={this.updateQuery}
-                facets={this.state.facets}
+                facets={facets}
                 isCollapsible
               />
             </div>
@@ -275,10 +275,11 @@ export class TimelineScreenInner extends React.Component {
           <DualPane.ContentPane>
             <SignInCallout />
             <QueryTags query={query} updateQuery={this.updateQuery} />
-            <EntityTable
+            <TimelineEventTable
               query={query}
               updateQuery={this.updateQuery}
               result={result}
+              hideCollection={hideCollection}
             />
             {result.total === 0 && (
               <ErrorSection

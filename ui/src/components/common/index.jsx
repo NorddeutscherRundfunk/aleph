@@ -30,6 +30,7 @@ import Timeline from './Timeline';
 import QueryText from './QueryText';
 import ResultCount from './ResultCount';
 import FuzzyDatePicker from './FuzzyDatePicker';
+import Boolean from './Boolean';
 
 export {
   Breadcrumbs,
@@ -64,6 +65,7 @@ export {
   QueryText,
   ResultCount,
   FuzzyDatePicker,
+  Boolean,
 };
 
 export * from './types';
