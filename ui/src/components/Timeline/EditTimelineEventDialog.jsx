@@ -60,12 +60,17 @@ export class EditTimelineEventDialog extends Component {
 
     // FIXME ftm implementation?
     [...entity.properties.keys()].map(prop => { // eslint-disable-line
-      if (data[prop.name]) {
-        try {
-          entity.properties.set(prop, [data[prop.name]]);
-        } catch (e) {
-          console.log(e.message);  // eslint-disable-line
-        }
+      if (prop.name in data) {
+        entity.properties.set(prop, [data[prop.name]]);
+        delete data[prop.name];
+      }
+    });
+    // add remaining data
+    Object.keys(data).map(key => { // eslint-disable-line
+      try {
+        entity.setProperty(key, data[key]);
+      } catch (e) { // schema error
+        console.log(key, data[key], e.message);  // eslint-disable-line
       }
     });
 
