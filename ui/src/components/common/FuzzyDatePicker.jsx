@@ -3,6 +3,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'redux';
 import { Tag } from '@blueprintjs/core';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime';
+import toDate from 'src/util/toDate';
 
 import './FuzzyDatePicker.scss';
 
@@ -27,8 +28,6 @@ const messages = defineMessages({
 });
 
 const PRECISIONS = ['month', 'day', 'time'];
-
-const toDate = value => value;
 
 const FuzzyDatePrecision = ({ precisions, onToggle, intl }) => (
   <div className="FuzzyDatePrecision">

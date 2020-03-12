@@ -73,7 +73,6 @@ export class TimelineEventForm extends Component {
       timeline: props.timelines[0],
     };
 
-    this.possibleInvolvedEntities = getPossibleInvolvedEntities(props.document);
     this.onFieldChange = this.onFieldChange.bind(this);
     this.handleBoolChange = this.handleBoolChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
@@ -110,21 +109,23 @@ export class TimelineEventForm extends Component {
   }
 
   render() {
-    const { intl, timelines } = this.props;
+    const { intl, timelines, document, isNew } = this.props;
     const data = this.state;
     return (
       <div className="TimelineEventForm">
-        <FormGroup
-          label={intl.formatMessage(messages.label_timeline)}
-          labelFor="timeline-select"
-        >
-          <TimelineSelect
-            id="timeline-select"
-            timelines={timelines}
-            handleTimelineSelect={this.handleTimelineSelect}
-            selectedTimeline={data.timeline}
-          />
-        </FormGroup>
+        {isNew && (
+          <FormGroup
+            label={intl.formatMessage(messages.label_timeline)}
+            labelFor="timeline-select"
+          >
+            <TimelineSelect
+              id="timeline-select"
+              timelines={timelines}
+              handleTimelineSelect={this.handleTimelineSelect}
+              selectedTimeline={data.timeline}
+            />
+          </FormGroup>
+        )}
         <FormGroup
           label={intl.formatMessage(messages.label_title)}
           labelFor="name"
@@ -152,17 +153,19 @@ export class TimelineEventForm extends Component {
             value={data.summary || ''}
           />
         </FormGroup>
-        <FormGroup
-          label={intl.formatMessage(messages.label_involved)}
-          labelFor="event-involved"
-          helperText={intl.formatMessage(messages.help_involved)}
-        >
-          <TimelineEventInvolvedEntities
-            selectedEntities={data.involved}
-            entities={this.possibleInvolvedEntities}
-            onChange={this.handleInvolvedChange}
-          />
-        </FormGroup>
+        {isNew && (
+          <FormGroup
+            label={intl.formatMessage(messages.label_involved)}
+            labelFor="event-involved"
+            helperText={intl.formatMessage(messages.help_involved)}
+          >
+            <TimelineEventInvolvedEntities
+              selectedEntities={data.involved}
+              entities={getPossibleInvolvedEntities(document)}
+              onChange={this.handleInvolvedChange}
+            />
+          </FormGroup>
+        )}
         <FormGroup
           label={intl.formatMessage(messages.label_date)}
           labelFor="event-date"

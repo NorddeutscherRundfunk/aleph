@@ -61,8 +61,7 @@ class TimelineEventDatePicker extends Component {
   }
 
   toggleSolo() {
-    const { solo } = this.state;
-    this.setState({ solo: !solo });
+    this.setState(({ solo }) => ({ solo: !solo }));
   }
 
   handleChange(prefix, { value, localizedValue }) {
