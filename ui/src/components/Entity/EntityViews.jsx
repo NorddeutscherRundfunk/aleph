@@ -57,6 +57,8 @@ class EntityViews extends React.Component {
     const refs = !references.results ? [] : references.results.filter(ref => !ref.reverse.hidden);
     const processingError = entity.getProperty('processingError');
     const canAddTimelineEvent = hasDocumentViewMode && !isPreview;
+    const showTags = entity.schema.isA('Event')
+      || (entity.schema.isDocument() && (!processingError || !processingError.length));
 
     return (
       <Tabs
@@ -143,7 +145,7 @@ class EntityViews extends React.Component {
             }
           />
         ))}
-        { entity.schema.isDocument() && (!processingError || !processingError.length) && (
+        {showTags && (
           <Tab
             id="tags"
             disabled={tags.total < 1}
