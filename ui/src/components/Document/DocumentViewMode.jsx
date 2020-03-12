@@ -95,24 +95,29 @@ export class DocumentViewMode extends React.Component {
   }
 
   render() {
-    const { document, location } = this.props;
+    const { document, location, activeMode } = this.props;
     const { addTimelineEventIsOpen } = this.state;
+    const canAddTimelineEvent = activeMode === 'view';
     if (document.isLoading || document.shouldLoad) {
       return null;
     }
 
     return (
       <div className="DocumentViewMode">
-        <button className="bp3-button bp3-intent-primary" onClick={this.toggleAddTimelineEvent}>
-          Add timeline event
-        </button>
+        {canAddTimelineEvent && (
+          <>
+            <button className="bp3-button bp3-intent-primary" onClick={this.toggleAddTimelineEvent}>
+              Add timeline event
+            </button>
+            <AddTimelineEventDialog
+              document={document}
+              location={location}
+              toggleDialog={this.toggleAddTimelineEvent}
+              isOpen={addTimelineEventIsOpen}
+            />
+          </>
+        )}
         {this.renderContent()}
-        <AddTimelineEventDialog
-          document={document}
-          location={location}
-          toggleDialog={this.toggleAddTimelineEvent}
-          isOpen={addTimelineEventIsOpen}
-        />
       </div>
     );
   }
