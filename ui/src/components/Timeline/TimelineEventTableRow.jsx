@@ -50,10 +50,10 @@ class TimelineEventTableRow extends Component {
             <Country.List codes={entity.getTypeValues('country')} />
           </td>
           <td className="date">
-            <Date value={entity.getFirst('startDate')} showTime />
+            <Date value={entity.getFirst('startDate')} />
           </td>
           <td className="date">
-            <Date value={entity.getFirst('endDate')} showTime />
+            <Date value={entity.getFirst('endDate')} />
           </td>
           <td className="date">
             {!entity.hasProperty('startDate') && <Date.Earliest values={entity.getTypeValues('date')} />}
