@@ -91,3 +91,13 @@ class XrefQuery(Query):
 
     def get_index(self):
         return xref_index()
+
+class TimelineEventsQuery(EntitiesQuery):
+    def __init__(self, *args, **kwargs):
+        self.timeline = kwargs.pop('timeline')
+        super(TimelineEventsQuery, self).__init__(*args, **kwargs)
+
+    def get_filters(self):
+        filters = super(TimelineEventsQuery, self).get_filters()
+        filters.append({'ids': {'values': self.timeline.entities}})
+        return filters

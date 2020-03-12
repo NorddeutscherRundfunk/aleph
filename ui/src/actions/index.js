@@ -33,6 +33,7 @@ export {
   fetchTimeline,
   queryTimelines,
   updateTimeline,
+  queryTimelineEvents,
 } from './timelineActions';
 export {
   createEntity,
