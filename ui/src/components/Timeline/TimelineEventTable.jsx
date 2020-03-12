@@ -5,6 +5,8 @@ import c from 'classnames';
 import { compose } from 'redux';
 import { withRouter } from 'react-router';
 import { SortableTH, ErrorSection } from 'src/components/common';
+
+import EditTimelineEventDialog from './EditTimelineEventDialog';
 import TimelineEventTableRow from './TimelineEventTableRow';
 
 import './TimelineEventTable.scss';
@@ -41,6 +43,24 @@ const messages = defineMessages({
 });
 
 class TimelineEventTable extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      editIsOpen: false,
+    };
+
+    this.toggleEditTimelineEvent = this.toggleEditTimelineEvent.bind(this);
+  }
+
+  toggleEditTimelineEvent(editEntity) {
+    const { editIsOpen } = this.state;
+    if (editIsOpen) {
+      this.setState({ editIsOpen: false, editEntity: undefined });
+    } else {
+      this.setState({ editIsOpen: true, editEntity });
+    }
+  }
+
   sortColumn(newField) {
     const { query, updateQuery } = this.props;
     const { field: currentField, direction } = query.getSort();
@@ -60,6 +80,7 @@ class TimelineEventTable extends Component {
     const { query, intl, location, result } = this.props;
     const { hideCollection = false, showPreview = true } = this.props;
     const { updateSelection, selection } = this.props;
+    const { editIsOpen, editEntity } = this.state;
 
     if (result.isError) {
       return <ErrorSection error={result.error} />;
@@ -87,35 +108,47 @@ class TimelineEventTable extends Component {
       );
     };
     return (
-      <table className="TimelineEventTable data-table">
-        <thead>
-          <tr>
-            {updateSelection && (<th className="select" />)}
-            <TH field="name" className="wide" sortable />
-            {!hideCollection && (
-              <TH field="collection_id" className="wide" />
-            )}
-            <TH className="header-country" field="countries" sortable />
-            <TH className="header-dates" field="startDate" sortable />
-            <TH className="header-dates" field="endDate" sortable />
-            <TH className="header-dates" field="dates" sortable />
-            <TH className="header-important" field="important" sortable />
-          </tr>
-        </thead>
-        <tbody className={c({ updating: result.isLoading })}>
-          {results.map(entity => (
-            <TimelineEventTableRow
-              key={entity.id}
-              entity={entity}
-              location={location}
-              hideCollection={hideCollection}
-              showPreview={showPreview}
-              updateSelection={updateSelection}
-              selection={selection}
-            />
-          ))}
-        </tbody>
-      </table>
+      <>
+        {editEntity && (
+          <EditTimelineEventDialog
+            entity={editEntity}
+            location={location}
+            toggleDialog={this.toggleEditTimelineEvent}
+            isOpen={editIsOpen}
+          />
+        )}
+        <table className="TimelineEventTable data-table">
+          <thead>
+            <tr>
+              {updateSelection && (<th className="select" />)}
+              <TH field="name" className="wide" sortable />
+              {!hideCollection && (
+                <TH field="collection_id" className="wide" />
+              )}
+              <TH className="header-country" field="countries" sortable />
+              <TH className="header-dates" field="startDate" sortable />
+              <TH className="header-dates" field="endDate" sortable />
+              <TH className="header-dates" field="dates" sortable />
+              <TH className="header-important" field="important" sortable />
+              <th className="header-edit" />
+            </tr>
+          </thead>
+          <tbody className={c({ updating: result.isLoading })}>
+            {results.map(entity => (
+              <TimelineEventTableRow
+                key={entity.id}
+                entity={entity}
+                location={location}
+                hideCollection={hideCollection}
+                showPreview={showPreview}
+                updateSelection={updateSelection}
+                selection={selection}
+                handleEdit={() => this.toggleEditTimelineEvent(entity)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </>
     );
   }
 }

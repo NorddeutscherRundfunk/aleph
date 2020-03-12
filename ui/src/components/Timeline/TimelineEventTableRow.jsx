@@ -1,13 +1,26 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import queryString from 'query-string';
-import { Checkbox } from '@blueprintjs/core';
+import { Button, Checkbox, Icon } from '@blueprintjs/core';
 import c from 'classnames';
 
 import { Country, Collection, Entity, Date, Boolean } from 'src/components/common';
 /* eslint-disable */
 
 class TimelineEventTableRow extends Component {
+  constructor(props) {
+    super(props);
+    this.renderEditButton = this.renderEditButton.bind(this);
+  }
+
+  renderEditButton() {
+    const { entity, handleEdit } = this.props;
+    if (handleEdit && entity.collection.writeable) {
+      return <Button icon={<Icon icon="edit" />} onClick={handleEdit} />;
+    }
+    return null;
+  }
+
   render() {
     const { entity, location } = this.props;
     const { hideCollection, showPreview } = this.props;
@@ -60,6 +73,9 @@ class TimelineEventTableRow extends Component {
           </td>
           <td className="important">
             <Boolean value={!!entity.getFirst('important')} />
+          </td>
+          <td className="edit">
+            {this.renderEditButton()}
           </td>
         </tr>
         {!!highlights.length

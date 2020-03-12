@@ -124,6 +124,7 @@ export class AddTimelineEventDialog extends Component {
             document={document}
             onSave={this.onSave}
             blocking={blocking}
+            isNew
           />
         </div>
       </Dialog>
