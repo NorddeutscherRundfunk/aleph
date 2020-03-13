@@ -42,6 +42,11 @@ spec:
         env:
           - name: ALEPH_UI_URL
             value: http://34.95.115.88
+          - name: BALKHASH_DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                key: ALEPH_DATABASE_URI
+                name: aleph-db-uri
           - name: ALEPH_DATABASE_URI
             valueFrom:
               secretKeyRef:
