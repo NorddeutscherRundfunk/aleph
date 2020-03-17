@@ -21,6 +21,7 @@ import SuggestAlert from 'src/components/SuggestAlert/SuggestAlert';
 import Screen from 'src/components/Screen/Screen';
 import togglePreview from 'src/util/togglePreview';
 
+import TimelineHeading from 'src/components/Timeline/TimelineHeading';
 import TimelineEventTable from 'src/components/Timeline/TimelineEventTable';
 
 const messages = defineMessages({
@@ -247,6 +248,7 @@ export class TimelineScreenInner extends React.Component {
         ]}
       >
         {breadcrumbs}
+        <TimelineHeading timeline={timeline} />
         <DualPane className="SearchScreen">
           <DualPane.SidePane>
             <div
