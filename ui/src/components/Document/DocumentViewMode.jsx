@@ -1,9 +1,9 @@
-/* eslint-disable */
-
 import React, { lazy } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { Button } from '@blueprintjs/core';
+
 import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
 import Query from 'src/app/Query';
 import DefaultViewer from 'src/viewers/DefaultViewer';
@@ -19,18 +19,19 @@ import './DocumentViewMode.scss';
 
 const PdfViewer = lazy(() => import(/* webpackChunkName: 'base' */ 'src/viewers/PdfViewer'));
 
-
 export class DocumentViewMode extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      addTimelineEventIsOpen: false
+      addTimelineEventIsOpen: false,
     };
     this.toggleAddTimelineEvent = this.toggleAddTimelineEvent.bind(this);
   }
 
   toggleAddTimelineEvent() {
-    this.setState(({ addTimelineEventIsOpen }) => ({addTimelineEventIsOpen: !addTimelineEventIsOpen}));
+    this.setState(({ addTimelineEventIsOpen }) => ({
+      addTimelineEventIsOpen: !addTimelineEventIsOpen,
+    }));
   }
 
   renderContent() {
@@ -43,22 +44,19 @@ export class DocumentViewMode extends React.Component {
 
     if (document.schema.isA('Email')) {
       if (activeMode === 'browse') {
-        return (
-          <FolderViewer document={document} queryText={queryText} />
-        );
+        return <FolderViewer document={document} queryText={queryText} />;
       }
       return (
-        <EmailViewer document={document} queryText={queryText} activeMode={activeMode} />
+        <EmailViewer
+          document={document}
+          queryText={queryText}
+          activeMode={activeMode}
+        />
       );
     }
     if (document.schema.isA('Image')) {
       if (activeMode === 'text') {
-        return (
-          <TextViewer
-            document={document}
-            queryText={queryText}
-          />
-        );
+        return <TextViewer document={document} queryText={queryText} />;
       }
       return (
         <ImageViewer
@@ -70,35 +68,15 @@ export class DocumentViewMode extends React.Component {
     }
     if (document.schema.isA('Table')) {
       if (!document.links || !document.links.csv) {
-        return (
-          <TableViewer
-            document={document}
-            queryText={queryText}
-          />
-        );
+        return <TableViewer document={document} queryText={queryText} />;
       }
-      return (
-        <CSVStreamViewer
-          document={document}
-          queryText={queryText}
-        />
-      );
+      return <CSVStreamViewer document={document} queryText={queryText} />;
     }
     if (document.schema.isA('PlainText')) {
-      return (
-        <TextViewer
-          document={document}
-          queryText={queryText}
-        />
-      );
+      return <TextViewer document={document} queryText={queryText} />;
     }
     if (document.schema.isA('HyperText')) {
-      return (
-        <HtmlViewer
-          document={document}
-          queryText={queryText}
-        />
-      );
+      return <HtmlViewer document={document} queryText={queryText} />;
     }
     if (document.schema.isA('Pages')) {
       return (
@@ -110,12 +88,7 @@ export class DocumentViewMode extends React.Component {
       );
     }
     if (document.schema.isA('Folder')) {
-      return (
-        <FolderViewer
-          document={document}
-          queryText={queryText}
-        />
-      );
+      return <FolderViewer document={document} queryText={queryText} />;
     }
     return <DefaultViewer document={document} queryText={queryText} />;
   }
@@ -132,9 +105,12 @@ export class DocumentViewMode extends React.Component {
       <div className="DocumentViewMode">
         {canAddTimelineEvent && (
           <>
-            <button className="bp3-button bp3-intent-primary" onClick={this.toggleAddTimelineEvent}>
-              Add timeline event
-            </button>
+            <Button
+              icon="new-object"
+              text="Add timeline event"
+              className="bp3-button bp3-intent-primary"
+              onClick={this.toggleAddTimelineEvent}
+            />
             <AddTimelineEventDialog
               document={document}
               location={location}
@@ -149,7 +125,6 @@ export class DocumentViewMode extends React.Component {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
   const { location } = ownProps;
   const query = Query.fromLocation('entities', location, {}, '');
@@ -158,7 +133,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default compose(
-  withRouter,
-  connect(mapStateToProps),
-)(DocumentViewMode);
+export default compose(withRouter, connect(mapStateToProps))(DocumentViewMode);
