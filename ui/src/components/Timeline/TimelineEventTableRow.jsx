@@ -39,6 +39,10 @@ class TimelineEventTableRow extends Component {
     const colSpan = hideCollection ? 5 : 6;
     const summary = entity.getFirst('summary');
 
+    // FIXME boolean schema implementation
+    const imp = entity.getFirst('important');
+    const important = !!imp && imp !== 'false';
+
     return (
       <>
         <tr key={entity.id} className={resultClass}>
@@ -72,7 +76,7 @@ class TimelineEventTableRow extends Component {
             {!entity.hasProperty('startDate') && <Date.Earliest values={entity.getTypeValues('date')} />}
           </td>
           <td className="important">
-            <Boolean value={!!entity.getFirst('important')} />
+            <Boolean value={important} />
           </td>
           <td className="edit">
             {this.renderEditButton()}
