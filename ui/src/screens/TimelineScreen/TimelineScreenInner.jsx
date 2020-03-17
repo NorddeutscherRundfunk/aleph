@@ -49,6 +49,7 @@ const facetKeys = [
   'languages',
   'names',
   'addresses',
+  'properties.important',
 ];
 
 export class TimelineScreenInner extends React.Component {
