@@ -57,7 +57,7 @@ class EntityViews extends React.Component {
     const hasViewMode = entity.schema.isDocument() && hasDocumentViewMode;
     const refs = !references.results ? [] : references.results.filter(ref => !ref.reverse.hidden);
     const processingError = entity.getProperty('processingError');
-    const canHaveTimelineEvents = hasDocumentViewMode && !isPreview;
+    const canHaveTimelineEvents = entity.schema.isDocument() && hasDocumentViewMode && !isPreview;
     const showTags = entity.schema.isA('Event')
       || (entity.schema.isDocument() && (!processingError || !processingError.length));
 

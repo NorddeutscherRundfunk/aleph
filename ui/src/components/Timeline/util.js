@@ -1,7 +1,7 @@
 // import { Entity } from '@alephdata/followthemoney';
 
-const getEntity = (model, properties, collection) => {
-  properties.alephUrl = window.location.href;
+const getEntity = (model, properties, collection, document) => {
+  properties.proof = document.id;
   const entity = {
     schema: 'Event',
     properties,
