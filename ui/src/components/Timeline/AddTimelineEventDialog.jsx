@@ -16,32 +16,38 @@ import './AddTimelineEventDialog.scss';
 
 const messages = defineMessages({
   placeholder_title: {
-    id: 'timeline.edit.info.placeholder_title',
+    id: 'timeline.event.edit.info.placeholder_title',
     defaultMessage: 'A title',
   },
   placeholder_summary: {
-    id: 'timeline.edit.info.placeholder_summary',
+    id: 'timeline.event.edit.info.placeholder_summary',
     defaultMessage: 'A brief summary',
   },
   important_flag: {
-    id: 'timeline.edit.info.important_flag',
+    id: 'timeline.event.edit.info.important_flag',
     defaultMessage: 'Important entry',
   },
   title: {
-    id: 'timeline.edit.title',
+    id: 'timeline.event.edit.title',
     defaultMessage: 'New timeline entry',
   },
   cancel_button: {
-    id: 'timeline.edit.info.cancel',
+    id: 'timeline.event.edit.info.cancel',
     defaultMessage: 'Cancel',
   },
   save_button: {
-    id: 'timeline.edit.info.save',
+    id: 'timeline.event.edit.info.save',
     defaultMessage: 'Save changes',
   },
   save_success: {
-    id: 'timeline.edit.save_success',
+    id: 'timeline.event.edit.save_success',
     defaultMessage: 'Your changes are saved.',
+  },
+  no_timelines: {
+    id: 'timeline.event.edit.no_timelines',
+    defaultMessage: `
+      You don't have write access to any timelines. Please ask someone to invite you
+      to an existing timeline, or create your own timeline in your personal datasets.`,
   },
 });
 
@@ -110,6 +116,7 @@ export class AddTimelineEventDialog extends Component {
 
   render() {
     const { intl, document, timelines } = this.props;
+    const writeableTimelines = timelines.results.filter(t => t.writeable);
     const { blocking } = this.state;
     return (
       <Dialog
@@ -120,13 +127,19 @@ export class AddTimelineEventDialog extends Component {
         title={intl.formatMessage(messages.title)}
       >
         <div className="bp3-dialog-body">
-          <TimelineEventForm
-            timelines={timelines.results}
-            document={document}
-            onSave={this.onSave}
-            blocking={blocking}
-            isNew
-          />
+          {writeableTimelines.length ? (
+            <TimelineEventForm
+              timelines={writeableTimelines}
+              document={document}
+              onSave={this.onSave}
+              blocking={blocking}
+              isNew
+            />
+          ) : (
+            <span className="AddTimelineEventDialog__no-timelines">
+              {intl.formatMessage(messages.no_timelines)}
+            </span>
+          )}
         </div>
       </Dialog>
     );
@@ -135,14 +148,13 @@ export class AddTimelineEventDialog extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { location } = ownProps;
-  const context = { 'filter:writeable': true };
   const query = Query.fromLocation(
     'timelines',
     location,
-    context,
+    {},
     'timelines',
   ).sortBy('updated_at', 'desc');
-
+  // filter for write access is handled later
   const timelines = selectTimelinesResult(state, query);
   const model = selectModel(state);
 
