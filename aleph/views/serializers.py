@@ -364,36 +364,5 @@ class LinkageSerializer(Serializer):
     pass
 
 
-class TimelineSerializer(Serializer):
-
-    def _collect(self, obj):
-        self.queue(Collection, obj.get('collection_id'))
-        ent_ids = obj['entities']
-        for ent_id in ensure_list(ent_ids):
-            self.queue(Entity, ent_id)
-
-    def _serialize(self, obj):
-        pk = obj.get('id')
-        obj['id'] = str(pk)
-        collection_id = obj.pop('collection_id', None)
-        obj['writeable'] = request.authz.can(collection_id, request.authz.WRITE)  # noqa
-        obj['collection'] = self.resolve(Collection, collection_id, CollectionSerializer)  # noqa
-        ent_ids = obj.pop('entities')
-        obj['entities'] = []
-        for ent_id in ent_ids:
-            entity = self.resolve(Entity, ent_id, EntitySerializer)
-            if entity is not None:
-                obj['entities'].append(entity)
-        for ent in obj['entities']:
-            schema = model.get(ent.get('schema'))
-            properties = ent.get('properties', {})
-            for prop in schema.properties.values():
-                if prop.type != registry.entity:
-                    continue
-                values = ensure_list(properties.get(prop.name))
-                if values:
-                    properties[prop.name] = []
-                    for value in values:
-                        entity = self.resolve(Entity, value, CaseFileItemEntitySerializer)  # noqa
-                        properties[prop.name].append(entity)
-        return self._clean_response(obj)
+class TimelineSerializer(DiagramSerializer):
+    pass
