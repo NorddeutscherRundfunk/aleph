@@ -100,7 +100,7 @@ export class DocumentViewMode extends React.Component {
   render() {
     const { document, location, activeMode } = this.props;
     const { addTimelineEventIsOpen } = this.state;
-    const canAddTimelineEvent = activeMode === 'view';
+    const canAddTimelineEvent = activeMode === 'view' && location.hash?.indexOf('preview') < 0;
 
     if (document.isPending) {
       return null;
