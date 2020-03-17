@@ -79,12 +79,10 @@ export class TimelineEventsMode extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  // const { location, document } = ownProps;
-  const { location } = ownProps;
+  const { location, document } = ownProps;
   const context = {
     'filter:schema': 'Event',
-    // 'filter:collection_id': document.collection.id,
-    // 'filter:alephUrl': document.links.ui,
+    'filter:properties.proof': document.id,
   };
   const query = Query.fromLocation('entities', location, context, 'events');
   const result = selectEntitiesResult(state, query);
