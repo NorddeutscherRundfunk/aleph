@@ -68,7 +68,7 @@ export class AddTimelineEventDialog extends Component {
   }
 
   async onSave(timelineEvent) {
-    const { intl, model } = this.props;
+    const { intl, model, document } = this.props;
     const { blocking } = this.state;
     if (blocking) return;
     this.setState({ blocking: true });
@@ -78,6 +78,7 @@ export class AddTimelineEventDialog extends Component {
       model,
       timelineEvent,
       timelineEvent.timeline.collection,
+      document,
     );
 
     // FIXME implementation?
