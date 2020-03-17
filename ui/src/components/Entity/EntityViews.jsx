@@ -18,6 +18,7 @@ import EntitySimilarMode from 'src/components/Entity/EntitySimilarMode';
 import EntityInfoMode from 'src/components/Entity/EntityInfoMode';
 import EntityMappingMode from 'src/components/Entity/EntityMappingMode';
 import DocumentViewMode from 'src/components/Document/DocumentViewMode';
+import DocumentEventsMode from 'src/components/Timeline/DocumentEventsMode';
 
 
 class EntityViews extends React.Component {
@@ -56,7 +57,7 @@ class EntityViews extends React.Component {
     const hasViewMode = entity.schema.isDocument() && hasDocumentViewMode;
     const refs = !references.results ? [] : references.results.filter(ref => !ref.reverse.hidden);
     const processingError = entity.getProperty('processingError');
-    const canAddTimelineEvent = hasDocumentViewMode && !isPreview;
+    const canHaveTimelineEvents = hasDocumentViewMode && !isPreview;
     const showTags = entity.schema.isA('Event')
       || (entity.schema.isDocument() && (!processingError || !processingError.length));
 
@@ -184,7 +185,7 @@ class EntityViews extends React.Component {
             panel={<EntityMappingMode document={entity} />}
           />
         )}
-        {canAddTimelineEvent && (
+        {canHaveTimelineEvents && (
           <Tab
             id="events"
             title={(
@@ -193,7 +194,7 @@ class EntityViews extends React.Component {
                 <FormattedMessage id="entity.timeline.view" defaultMessage="Timeline events" />
               </>
             )}
-            panel={<h1>Events</h1>}
+            panel={<DocumentEventsMode document={entity} />}
           />
         )}
       </Tabs>

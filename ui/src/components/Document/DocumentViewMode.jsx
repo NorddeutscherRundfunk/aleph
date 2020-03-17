@@ -2,7 +2,7 @@ import React, { lazy } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
+import { Button } from '@blueprintjs/core';
 import Query from 'src/app/Query';
 import DefaultViewer from 'src/viewers/DefaultViewer';
 import TableViewer from 'src/viewers/TableViewer';
@@ -11,6 +11,7 @@ import HtmlViewer from 'src/viewers/HtmlViewer';
 import ImageViewer from 'src/viewers/ImageViewer';
 import FolderViewer from 'src/viewers/FolderViewer';
 import EmailViewer from 'src/viewers/EmailViewer';
+import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
 
 import './DocumentViewMode.scss';
 
@@ -21,13 +22,15 @@ export class DocumentViewMode extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      addTimelineEventIsOpen: false
+      addTimelineEventIsOpen: false,
     };
     this.toggleAddTimelineEvent = this.toggleAddTimelineEvent.bind(this);
   }
 
   toggleAddTimelineEvent() {
-    this.setState(({ addTimelineEventIsOpen }) => ({addTimelineEventIsOpen: !addTimelineEventIsOpen}));
+    this.setState(({ addTimelineEventIsOpen }) => ({
+      addTimelineEventIsOpen: !addTimelineEventIsOpen,
+    }));
   }
 
   renderContent() {
@@ -98,7 +101,8 @@ export class DocumentViewMode extends React.Component {
     const { document, location, activeMode } = this.props;
     const { addTimelineEventIsOpen } = this.state;
     const canAddTimelineEvent = activeMode === 'view';
-    if (document.isLoading || document.shouldLoad) {
+
+    if (document.isPending) {
       return null;
     }
 
@@ -106,9 +110,12 @@ export class DocumentViewMode extends React.Component {
       <div className="DocumentViewMode">
         {canAddTimelineEvent && (
           <>
-            <button className="bp3-button bp3-intent-primary" onClick={this.toggleAddTimelineEvent}>
-              Add timeline event
-            </button>
+            <Button
+              icon="new-object"
+              text="Add timeline event"
+              className="bp3-button bp3-intent-primary"
+              onClick={this.toggleAddTimelineEvent}
+            />
             <AddTimelineEventDialog
               document={document}
               location={location}
