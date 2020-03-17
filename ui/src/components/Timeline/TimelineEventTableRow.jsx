@@ -5,7 +5,6 @@ import { Button, Checkbox, Icon } from '@blueprintjs/core';
 import c from 'classnames';
 
 import { Country, Collection, Entity, Date, Boolean } from 'src/components/common';
-/* eslint-disable */
 
 class TimelineEventTableRow extends Component {
   constructor(props) {
@@ -37,6 +36,9 @@ class TimelineEventTableRow extends Component {
     const isPrefix = !!highlights.length;
     const resultClass = c('TimelineEventTableRow', 'nowrap', { active: isActive }, { prefix: isPrefix });
     const highlightsClass = c('TimelineEventTableRow', { active: isActive });
+    const colSpan = hideCollection ? 5 : 6;
+    const summary = entity.getFirst('summary');
+
     return (
       <>
         <tr key={entity.id} className={resultClass}>
@@ -52,13 +54,11 @@ class TimelineEventTableRow extends Component {
               icon
             />
           </td>
-          {!hideCollection
-            && (
+          {!hideCollection && (
             <td className="collection">
               <Collection.Link preview collection={entity.collection} icon />
             </td>
-            )
-          }
+          )}
           <td className="country">
             <Country.List codes={entity.getTypeValues('country')} />
           </td>
@@ -78,20 +78,23 @@ class TimelineEventTableRow extends Component {
             {this.renderEditButton()}
           </td>
         </tr>
-        {!!highlights.length
-          && (
+        {highlights.length ? (
           <tr key={`${entity.id}-hl`} className={highlightsClass}>
             <td colSpan="5" className="highlights">
-              {highlights.map((phrase, index) => (
+              {highlights.map((phrase, index) => ( // eslint-disable-next-line
                 <span key={index}>
                   <span dangerouslySetInnerHTML={{ __html: phrase }} />
-…
+                  …
                 </span>
               ))}
             </td>
           </tr>
-          )
-        }
+        ) : summary && (
+          <tr key={`${entity.id}-summary`} className="TimelineEventTableRow__summary">
+            {updateSelection && <td />}
+            <td colSpan={colSpan}>{entity.getFirst('summary')}</td>
+          </tr>
+        )}
       </>
     );
   }

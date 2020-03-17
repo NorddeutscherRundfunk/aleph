@@ -1,0 +1,15 @@
+@import "src/app/variables.scss";
+
+.TimelineHeading {
+  padding: $aleph-content-padding;
+
+  &__title, &__subtitle, &__description {
+    margin: 10px 0;
+    overflow-wrap: break-word;
+  }
+
+  &__title {
+    line-height: 1.5;
+  }
+}
+
