@@ -47,6 +47,10 @@ const messages = defineMessages({
     id: 'facet.category',
     defaultMessage: '{count, plural, one {Category} other {Categories}}',
   },
+  facet_important: {
+    id: 'facet.properties.important',
+    defaultMessage: 'Important?',
+  },
 });
 
 const propLabels = {
@@ -105,6 +109,11 @@ const propLabels = {
     field: 'schema',
     label: messages.facet_schema,
     icon: 'list-columns',
+  },
+  'properties.important': {
+    field: 'properties.important',
+    label: messages.facet_important,
+    icon: 'info-sign',
   },
 };
 
