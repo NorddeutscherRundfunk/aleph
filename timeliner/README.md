@@ -3,7 +3,7 @@
 
 ### Background
 
-A timeline in Aleph always bases on a collection of data. If you haven't uploaded a collection yourself or haven't been invited to a collection, you cannot create a timeline. Look here on how to upload data into Aleph and share that data with others. (LINK TO ALEPH DOCUMENTATION.)
+A timeline in Aleph always bases on a collection of data. If you haven't uploaded a collection yourself or haven't been invited to a collection, you cannot create a timeline. See [Aleph's documentation](https://docs.alephdata.org/) for how to get startet, upload data into Aleph and share that data with others.
 
 Every element in a timeline needs proof in form of a document. Thus, once you're ready to publish, legal personal can vet every step in your documentation. In case you don't have a hard-copy of this event, but know from this e.g. via at least two independent sources, you can create a memo, upload this into Aleph and then create a timeline event from it. Sounds tedious at first, but in the end you'll be grateful.
 
