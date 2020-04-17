@@ -42,14 +42,23 @@ Since Aleph is about collaboration, too, users have access to different data col
 
 ### Add Timeline Events
 
-Wenn ein User noch keine Timeline erstellt hat, ist der Button
+Choose an object, e.g. document, spreadsheet, etc., in a dataset, click on expand followed by clicking on "Add timeline event". **(NOTE: THE "ADD TIMELINE EVENT" BUTTON SHOULD ALSO BE VISIBILE WITHOUT EXPANDING. THIS NEEDS FIXING. EDIT PREVIOUS SENTENCE WHEN FIXED.)** When users have not yet created a timeline or access to a timeline, this button cannot be activated.
+
+Once you clicked "Add timeline event", a pop-up windows opens where you can make your timeline entry in following these steps:
+
+1. Choose Timeline to add the event to.
+2. Fill in Title and Summary
+3. Choose persons, companies and organisations if applicable. This is optional, but might proof useful later, when using Aleph's [entity extraction engine](https://docs.alephdata.org/developers/technical-faq#how-does-aleph-extract-named-entities-from-text).
+4. Pick a date, date range or less accurate time stamp like month and year if you don't know the specific date.
+5. Flag this entry as important if applicable.
 
 ### Edit Timeline Events
 
 Navigate to a timeline containing the event you want to edit, open the timeline and click on the pencil button for the specific event, make desired changes, save changes.
 
+# 4. Searching for Timeline Events in Aleph
 
-
+Since timeline events work as any other document in Aleph they are registered by and diplayed in search queries.
 
 
 # ? Shortcuts?
