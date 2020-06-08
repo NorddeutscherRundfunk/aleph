@@ -3,8 +3,8 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import Query from 'src/app/Query';
 import { SectionLoading } from 'src/components/common';
+import { queryCollectionTimelines } from 'src/queries';
 import { queryTimelines } from 'src/actions';
 import { selectTimelinesResult } from 'src/selectors';
 import ErrorScreen from 'src/components/Screen/ErrorScreen';
@@ -20,7 +20,7 @@ export class CollectionTimelinesIndexMode extends Component {
   getMoreResults() {
     const { query, result } = this.props;
     if (result && !result.isLoading && result.next && !result.isError) {
-      this.props.queryTimelines({ query, next: result.next });
+      this.props.queryCollectionTimelines({ query, next: result.next });
     }
   }
 
@@ -52,12 +52,8 @@ export class CollectionTimelinesIndexMode extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { collection } = ownProps;
-  const context = {
-    'filter:collection_id': collection.id,
-  };
-  const query = new Query('timelines', {}, context, 'timelines')
-    .sortBy('updated_at', 'desc');
+  const { collection, location } = ownProps;
+  const query = queryCollectionTimelines(location, collection.id);
   const result = selectTimelinesResult(state, query);
 
   return {
@@ -68,6 +64,6 @@ const mapStateToProps = (state, ownProps) => {
 
 
 export default compose(
-  connect(mapStateToProps, { queryTimelines }),
   withRouter,
+  connect(mapStateToProps, { queryTimelines }),
 )(CollectionTimelinesIndexMode);
