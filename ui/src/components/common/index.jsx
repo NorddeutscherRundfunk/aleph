@@ -29,7 +29,6 @@ import Summary from './Summary';
 import Timeline from './Timeline';
 import QueryText from './QueryText';
 import ResultCount from './ResultCount';
-import FuzzyDatePicker from './FuzzyDatePicker';
 import Boolean from './Boolean';
 
 export {
@@ -64,7 +63,6 @@ export {
   SortingBar,
   QueryText,
   ResultCount,
-  FuzzyDatePicker,
   Boolean,
 };
 
