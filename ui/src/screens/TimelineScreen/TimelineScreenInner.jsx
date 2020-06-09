@@ -20,10 +20,10 @@ import QueryTags from 'src/components/QueryTags/QueryTags';
 import SuggestAlert from 'src/components/SuggestAlert/SuggestAlert';
 import Screen from 'src/components/Screen/Screen';
 import togglePreview from 'src/util/togglePreview';
+import entityEditorWrapper from 'src/components/Entity/entityEditorWrapper';
 
 import TimelineHeading from 'src/components/Timeline/TimelineHeading';
-import TimelineEventTable from 'src/components/Timeline/TimelineEventTable';
-import DateRangeQuery from 'src/components/Timeline/DateRangeQuery';
+import TimelineEventList from 'src/components/Timeline/TimelineEventList';
 import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
 
 import './TimelineScreenInner.scss';
@@ -200,7 +200,8 @@ export class TimelineScreenInner extends React.Component {
   }
 
   render() {
-    const { query, result, intl, timeline, timelineOperations, timelineStatus } = this.props;
+    const { query, result, intl, entityManager } = this.props;
+    const { timeline, timelineOperations, timelineStatus } = this.props;
     const { hideFacets, facets, addTimelineEventIsOpen } = this.state;
     const title = query.getString('q') || intl.formatMessage(messages.page_title);
     const hideFacetsClass = hideFacets ? 'show' : 'hide';
@@ -208,7 +209,6 @@ export class TimelineScreenInner extends React.Component {
     const hasExportLink = result && result.links && result.links.export;
     const exportLink = !hasExportLink ? null : result.links.export;
     const tooltip = intl.formatMessage(messages.alert_export_disabled);
-    const hideCollection = facets.indexOf('collection_id') < 0;
     const canAddTimelineEvent = timeline.collection.writeable;
 
     const operation = (
@@ -278,7 +278,6 @@ export class TimelineScreenInner extends React.Component {
             />
           </div>
         )}
-        <DateRangeQuery query={query} updateQuery={this.updateQuery} />
         <DualPane className="SearchScreen">
           <DualPane.SidePane>
             <div
@@ -307,11 +306,11 @@ export class TimelineScreenInner extends React.Component {
           <DualPane.ContentPane>
             <SignInCallout />
             <QueryTags query={query} updateQuery={this.updateQuery} />
-            <TimelineEventTable
+            <TimelineEventList
+              entityManager={entityManager}
               query={query}
               updateQuery={this.updateQuery}
               result={result}
-              hideCollection={hideCollection}
             />
             {result.total === 0 && (
               <ErrorSection
@@ -338,21 +337,23 @@ export class TimelineScreenInner extends React.Component {
 }
 const mapStateToProps = (state, ownProps) => {
   const { location, timeline } = ownProps;
+  const { collection } = timeline;
   const context = {
     highlight: true,
     'filter:schema': 'Event',
-    'filter:collection_id': timeline.collection.id,
+    'filter:collection_id': collection.id,
   };
   const path = `timelines/${timeline.id}/events`;
   const query = Query.fromLocation(path, location, context, 'events');
   const result = selectEntitiesResult(state, query);
-  return { query, result };
+  return { query, result, collection };
 };
 
 const mapDispatchToProps = { queryEntities };
 
 export default compose(
+  injectIntl,
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-  injectIntl,
+  entityEditorWrapper,
 )(TimelineScreenInner);

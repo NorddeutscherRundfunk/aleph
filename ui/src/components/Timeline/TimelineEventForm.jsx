@@ -167,6 +167,7 @@ export class TimelineEventForm extends Component {
                 entity={entity}
                 property={property}
                 fetchEntitySuggestions={entityManager.getEntitySuggestions}
+                resolveEntityReference={entityManager.resolveEntityReference}
               />
             </div>
           )}
@@ -175,6 +176,7 @@ export class TimelineEventForm extends Component {
               <Property.Values
                 prop={property}
                 values={entity.getProperty(property.name)}
+                resolveEntityReference={entityManager.resolveEntityReference}
               />
             </div>
           )}

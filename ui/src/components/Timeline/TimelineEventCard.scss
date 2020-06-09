@@ -1,0 +1,54 @@
+.TimelineEventCard {
+  margin-bottom: 15px;
+
+  &__head {
+    font-size: 1.3em;
+    position: relative;
+
+    &__dates {
+      display: inline-block;
+      position: absolute;
+      right: 0;
+      width: auto;
+    }
+
+    .EntityLabel {
+      font-weight: bold;
+    }
+  }
+
+  &__date {
+    margin-left: 10px;
+    font-weight: bold;
+
+    span.label {
+      font-weight: normal;
+      text-transform: uppercase;
+      padding: 4px;
+    }
+  }
+
+  &__property-item {
+    margin-top: 15px;
+
+    &__name {
+      margin-bottom: 8px;
+      display: block;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+
+  &__body {
+
+    &__text {
+      white-space: pre-line;
+    }
+
+  }
+
+  &__footer {
+    margin-top: 15px;
+  }
+
+}

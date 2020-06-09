@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { Dialog } from '@blueprintjs/core';
 import { defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'redux';
-import { connect } from 'react-redux';
 
 import { showSuccessToast, showWarningToast } from 'src/app/toast';
-import entityEditorWrapper from 'src/components/Entity/entityEditorWrapper';
 
 import TimelineEventForm from './TimelineEventForm';
 
@@ -60,7 +58,7 @@ export class EditTimelineEventDialog extends Component {
     this.setState({ blocking: true });
 
     try {
-      await this.props.updateEntity(entity);
+      await this.props.entityManager.updateEntity(entity);
       showSuccessToast(intl.formatMessage(messages.save_success));
       this.props.toggleDialog();
     } catch (e) {
@@ -98,13 +96,6 @@ export class EditTimelineEventDialog extends Component {
 }
 
 
-const mapStateToProps = (state, ownProps) => {
-  return { collection: ownProps.entity.collection };
-}
-
-
 export default compose(
-  connect(mapStateToProps),
   injectIntl,
-  entityEditorWrapper,
 )(EditTimelineEventDialog);

@@ -1,0 +1,18 @@
+.TimelineEventList {
+  margin: 15px;
+  position: relative;
+
+  &__sortable-fields {
+    padding-top: 25px;
+    padding-bottom: 25px;
+
+    &__title {
+      display: inline;
+      padding-right: 25px;
+    }
+  }
+
+  &__sortable-field {
+    margin-right: 10px;
+  }
+}
