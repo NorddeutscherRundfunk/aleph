@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aleph-ingest
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ingest-file
+  template:
+    metadata:
+      labels:
+        deployment: aleph-ingest-deployment
+        app: ingest-file
+    spec:
+      containers:
+      - name: ingest-file
+        image: gcr.io/GKE_PROJECT/ingest-file:latest
+        env:
+          - name: ALEPH_DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: aleph-db-uri
+                key: ALEPH_DATABASE_URI
+          - name: BALKHASH_DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: aleph-db-uri
+                key: ALEPH_DATABASE_URI
+          - name: ALEPH_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aleph-secret
+                key: ALEPH_SECRET_KEY
+        volumeMounts:
+          - mountPath: "/data"
+            name: "data"
+      volumes:
+       - name: "data"
+         nfs:
+           server: nfs-server.default.svc.cluster.local
+           path: "/"
+           readOnly: false

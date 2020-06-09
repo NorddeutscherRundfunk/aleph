@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      volumes:
+      - name: nfs-vol
+        persistentVolumeClaim:
+          claimName: data-disk
+      restartPolicy: Always
+      containers:
+      - name: nfs-server
+        image: itsthenetwork/nfs-server-alpine
+        env:
+        - name: SHARED_DIRECTORY
+          value: /nfsshare
+        ports:
+          - name: nfs
+            containerPort: 2049
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /nfsshare
+            name: nfs-vol 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-server
+spec:
+  ports:
+    - name: nfs
+      port: 2049
+  selector:
+    role: nfs-server

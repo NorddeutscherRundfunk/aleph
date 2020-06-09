@@ -1,0 +1,131 @@
+name: package
+
+on:
+  push:
+    branches:
+      - 'live'
+
+env:
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: standard-cluster-1
+  GKE_ZONE: europe-west1
+
+
+jobs:
+  docker-ui:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'live'
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - name: Build production image
+      run: |
+        docker build -t gcr.io/${GKE_PROJECT}/aleph-ui-production:${GITHUB_SHA} -f ui/Dockerfile.timline ui
+    - name: Publish
+      run: |
+        gcloud auth configure-docker
+        docker tag gcr.io/${GKE_PROJECT}/aleph-ui-production:${GITHUB_SHA} gcr.io/${GKE_PROJECT}/aleph-ui-production:latest
+        docker push gcr.io/$GKE_PROJECT/aleph-ui-production:${GITHUB_SHA}
+        docker push gcr.io/$GKE_PROJECT/aleph-ui-production:latest
+
+  docker-elasticsearch:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'live'
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - name: Build production image
+      run: |
+        docker build -t gcr.io/${GKE_PROJECT}/aleph-elasticsearch:${GITHUB_SHA} services/elasticsearch
+    - name: Publish
+      run: |
+        gcloud auth configure-docker
+        docker tag gcr.io/${GKE_PROJECT}/aleph-elasticsearch:${GITHUB_SHA} gcr.io/${GKE_PROJECT}/aleph-elasticsearch:latest
+        docker push gcr.io/$GKE_PROJECT/aleph-elasticsearch:${GITHUB_SHA}
+        docker push gcr.io/$GKE_PROJECT/aleph-elasticsearch:latest
+
+
+  docker-ingest-file:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'live'
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - name: Build production image
+      run: |
+        docker build -t gcr.io/${GKE_PROJECT}/ingest-file:${GITHUB_SHA} services/ingest-file
+    - name: Publish
+      run: |
+        gcloud auth configure-docker
+        docker tag gcr.io/$GKE_PROJECT/ingest-file:${GITHUB_SHA} gcr.io/$GKE_PROJECT/ingest-file:latest
+        docker push gcr.io/$GKE_PROJECT/ingest-file:${GITHUB_SHA}
+        docker push gcr.io/$GKE_PROJECT/ingest-file:latest
+  docker-aleph:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'live'
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - name: Build docker image
+      run: |
+        docker pull alephdata/aleph:latest
+        docker build --cache-from alephdata/aleph:latest -t gcr.io/${GKE_PROJECT}/aleph:${GITHUB_SHA} .
+    - name: Publish
+      run: |
+        gcloud auth configure-docker
+        docker tag gcr.io/$GKE_PROJECT/aleph:${GITHUB_SHA} gcr.io/$GKE_PROJECT/aleph:latest
+        docker push gcr.io/$GKE_PROJECT/aleph:${GITHUB_SHA}
+        docker push gcr.io/$GKE_PROJECT/aleph:latest
+  deploy:
+    runs-on: ubuntu-latest
+    needs: ["docker-ingest-file","docker-elasticsearch", "docker-ui","docker-aleph"]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'live'
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - name: Set up Kustomize
+      run: |
+        curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+    - name: Kustomize
+      run: |
+        gcloud container clusters get-credentials $GKE_CLUSTER \
+          --zone $GKE_ZONE --project $GKE_PROJECT
+        ./kustomize edit set image gcr.io/GKE_PROJECT/aleph-elasticsearch:latest=gcr.io/$GKE_PROJECT/aleph-elasticsearch:$GITHUB_SHA
+        ./kustomize edit set image gcr.io/GKE_PROJECT/ingest-file:latest=gcr.io/$GKE_PROJECT/ingest-file:$GITHUB_SHA
+        ./kustomize edit set image gcr.io/GKE_PROJECT/aleph:latest=gcr.io/$GKE_PROJECT/aleph:$GITHUB_SHA
+        ./kustomize edit set image gcr.io/GKE_PROJECT/aleph-ui-production:latest=gcr.io/$GKE_PROJECT/aleph-ui-production:$GITHUB_SHA
+        ./kustomize build . | kubectl apply --validate=false -f -
+    - uses: 8398a7/action-slack@v2
+      with:
+        status: ${{ job.status }}
+        author_name: Github Bot # default: 8398a7@action-slack
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      if: always() # Pick up events even if the job fails or is canceled.
