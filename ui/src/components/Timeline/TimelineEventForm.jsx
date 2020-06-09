@@ -67,6 +67,38 @@ const messages = defineMessages({
     id: 'timeline.form.help_involved',
     defaultMessage: 'Type in to search for involved entities',
   },
+  label_proof: {
+    id: 'timeline.form.label_proof',
+    defaultMessage: 'Source document',
+  },
+  help_proof: {
+    id: 'timeline.form.help_proof',
+    defaultMessage: 'Must be in the same collection as the timeline. Type in to search...',
+  },
+  label_location: {
+    id: 'timeline.form.label_location',
+    defaultMessage: 'Location',
+  },
+  help_location: {
+    id: 'timeline.form.help_location',
+    defaultMessage: 'A city or a full address, e.g. "Berlin" or "Singerstr. 109, 10179 Berlin, Germany"',
+  },
+  label_notes: {
+    id: 'timeline.form.label_notes',
+    defaultMessage: 'Other source',
+  },
+  help_notes: {
+    id: 'timeline.form.help_notes',
+    defaultMessage: 'If now source document, please describe the source.',
+  },
+  label_keywords: {
+    id: 'timeline.form.label_keywords',
+    defaultMessage: 'Keywords',
+  },
+  label_sourceUrl: {
+    id: 'timeline.form.label_sourceurl',
+    defaultMessage: 'Source url',
+  },
   save_button: {
     id: 'timeline.edit.info.save',
     defaultMessage: 'Save changes',
@@ -80,11 +112,16 @@ const EDITABLE_PROPERTIES = [
   'date',
   'startDate',
   'endDate',
+  'location',
   'country',
-  'important',
   'involved',
   'peopleMentioned',
   'companiesMentioned',
+  'proof',
+  'sourceUrl',
+  'notes',
+  'keywords',
+  'important',
 ]
 
 
@@ -98,6 +135,16 @@ export class TimelineEventForm extends Component {
   constructor(props) {
     super(props);
     const entity = props.entity || new Entity(props.model, emptyEntity);
+    const { timeline, document } = props;
+    if (document) {
+      if (document.collection.id === timeline.collection.id) {
+        entity.setProperty('proof', document);
+      } else {
+        // FIXME try to store the source document
+        // for migration later
+        entity.setProperty('recordId', document.id);
+      }
+    }
     this.state = { entity };
 
     this.onChange = this.onChange.bind(this);
@@ -193,6 +240,19 @@ export class TimelineEventForm extends Component {
     const companiesMentioned = document ? [...document.getProperty('companiesMentioned')] : [];
     const documentMentions = peopleMentioned.length + companiesMentioned.length;
 
+    const renderField = field => {
+      const help = messages[`help_${field}`]
+      return (
+        <FormGroup
+          label={intl.formatMessage(messages[`label_${field}`])}
+          labelFor={field}
+          helperText={help ? intl.formatMessage(help) : null}
+          >
+          {this.renderProperty(field)}
+        </FormGroup>
+      )
+    };
+
     return (
       <div className="TimelineEventForm">
         {timeline && (
@@ -230,19 +290,9 @@ export class TimelineEventForm extends Component {
             />
           </FormGroup>
         )}
-        <FormGroup
-          label={intl.formatMessage(messages.label_involved)}
-          labelFor="event-involved"
-          helperText={intl.formatMessage(messages.help_involved)}
-        >
-        {this.renderProperty('involved')}
-        </FormGroup>
-        <FormGroup
-          label={intl.formatMessage(messages.label_country)}
-          labelFor="country"
-        >
-          {this.renderProperty('country')}
-        </FormGroup>
+        {renderField('involved')}
+        {renderField('location')}
+        {renderField('country')}
         <FormGroup
           label={intl.formatMessage(messages.label_date)}
           labelFor="event-date"
@@ -255,12 +305,11 @@ export class TimelineEventForm extends Component {
             onChange={this.onChange}
           />
         </FormGroup>
-        <FormGroup
-          label={intl.formatMessage(messages.label_important)}
-          labelFor="important"
-        >
-          {this.renderProperty('important')}
-        </FormGroup>
+        {renderField('proof')}
+        {renderField('sourceUrl')}
+        {renderField('notes')}
+        {renderField('keywords')}
+        {renderField('important')}
         <Button
           intent={Intent.PRIMARY}
           onClick={this.onSave}
