@@ -109,11 +109,11 @@ export class TimelineEventForm extends Component {
     this.renderProperty = this.renderProperty.bind(this);
 
     this.propertyFields = {}
-    entity.schema.getEditableProperties().map(prop => {
+    for (let prop of entity.schema.getEditableProperties()) {
       if (EDITABLE_PROPERTIES.indexOf(prop.name) > -1) {
         this.propertyFields[prop.name] = prop
       }
-    })
+    }
   }
 
   onChange(entity) {
