@@ -10,10 +10,13 @@
     display: inline-block;
   }
 
-  &__date-range {
-    .FuzzyDatePicker {
-      width: 45%;
-      display: inline-block;
-    }
+  &__start, &__end {
+    width: 45%;
+    display: inline-block;
   }
+
+  &__end {
+    padding-left: 5%;
+  }
+
 }

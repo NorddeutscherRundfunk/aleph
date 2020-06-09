@@ -121,6 +121,7 @@ export class TimelineScreen extends Component {
           message={intl.formatMessage(messages.error_warning)}
         />
         <TimelineScreenInner
+          collection={timeline.collection}
           timeline={timeline}
           timelineOperations={operation}
           timelineStatus={status}

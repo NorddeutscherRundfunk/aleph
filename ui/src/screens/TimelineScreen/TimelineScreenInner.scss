@@ -1,0 +1,7 @@
+@import "src/app/variables.scss";
+
+.TimelineScreenInner {
+  &__add-event-action {
+    padding: $aleph-content-padding;
+  }
+}

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'redux';
-import { Switch, Tag } from '@blueprintjs/core';
-import { FuzzyDatePicker } from 'src/components/common';
+import { Switch } from '@blueprintjs/core';
 
 import './TimelineEventDatePicker.scss';
 
@@ -27,34 +26,14 @@ const messages = defineMessages({
     id: 'timeline.datepicker.help_toggle',
     defaultMessage: 'You can switch between a fixed date and a date range',
   },
-  start: {
-    id: 'timeline.datepicker.start',
-    defaultMessage: 'Start',
-  },
-  end: {
-    id: 'timeline.datepicker.end',
-    defaultMessage: 'End',
-  },
-  empty: {
-    id: 'timeline.datepicker.empty',
-    defaultMessage: 'No date(s) selected',
-  },
-  from: {
-    id: 'timeline.datepicker.from',
-    defaultMessage: 'From',
-  },
-  to: {
-    id: 'timeline.datepicker.to',
-    defaultMessage: 'To',
-  },
 });
 
 class TimelineEventDatePicker extends Component {
   constructor(props) {
     super(props);
-    const { startDate, endDate } = props;
+    const { entity } = props;
     this.state = {
-      solo: !(startDate && endDate),
+      solo: !(entity.getProperty('startDate').length && entity.getProperty('endDate').length),
     };
 
     this.toggleSolo = this.toggleSolo.bind(this);
@@ -64,47 +43,12 @@ class TimelineEventDatePicker extends Component {
     this.setState(({ solo }) => ({ solo: !solo }));
   }
 
-  handleChange(prefix, { value, localizedValue }) {
-    const data = this.state;
-    data[`${prefix}Local`] = localizedValue;
-    this.setState(data);
-    const parentData = {};
-    parentData[prefix] = value;
-    this.props.onChange(parentData);
-  }
-
-  renderDateRange() {
-    const { intl } = this.props;
-    const { solo, dateLocal, startDateLocal, endDateLocal } = this.state;
-    const start = intl.formatMessage(messages.start);
-    const end = intl.formatMessage(messages.end);
-    const from = intl.formatMessage(messages.from);
-    const to = intl.formatMessage(messages.to);
-    const tag = text => <Tag large>{text}</Tag>;
-
-    if (dateLocal && solo) {
-      return tag(dateLocal);
-    }
-    if (startDateLocal && endDateLocal) {
-      return <>{from}: {tag(startDateLocal)} {to}: {tag(endDateLocal)}</>; // eslint-disable-line
-    }
-    if (startDateLocal) {
-      return <>{start}: {tag(startDateLocal)}</>; // eslint-disable-line
-    }
-    if (endDateLocal) {
-      return <>{end}: {tag(endDateLocal)}</>; // eslint-disable-line
-    }
-    return <em>{intl.formatMessage(messages.empty)}</em>;
-  }
 
   render() {
-    const { intl, date, startDate, endDate } = this.props;
+    const { intl, renderProperty } = this.props;
     const { solo } = this.state;
     return (
       <div className="TimelineEventDatePicker">
-        <span className="TimelineEventDatePicker__value">
-          {this.renderDateRange()}
-        </span>
         <div className="TimelineEventDatePicker__toggle">
           <span>{intl.formatMessage(messages.help_toggle)}</span>
           <div className="TimelineEventDatePicker__switch">
@@ -120,24 +64,19 @@ class TimelineEventDatePicker extends Component {
         </div>
         {solo ? (
           <div className="TimelineEventDatePicker__solo-date">
-            <FuzzyDatePicker
-              title={intl.formatMessage(messages.label_solo)}
-              value={date}
-              onChange={(data) => this.handleChange('date', data)}
-            />
+            <span>{intl.formatMessage(messages.label_solo)}</span>
+            {renderProperty('date')}
           </div>
         ) : (
           <div className="TimelineEventDatePicker__date-range">
-            <FuzzyDatePicker
-              title={intl.formatMessage(messages.label_start)}
-              value={startDate}
-              onChange={(data) => this.handleChange('startDate', data)}
-            />
-            <FuzzyDatePicker
-              title={intl.formatMessage(messages.label_end)}
-              value={endDate}
-              onChange={(data) => this.handleChange('endDate', data)}
-            />
+            <div className="TimelineEventDatePicker__start">
+              <span>{intl.formatMessage(messages.label_start)}</span>
+              {renderProperty('startDate')}
+            </div>
+            <div className="TimelineEventDatePicker__end">
+              <span>{intl.formatMessage(messages.label_end)}</span>
+              {renderProperty('endDate')}
+            </div>
           </div>
         )}
       </div>

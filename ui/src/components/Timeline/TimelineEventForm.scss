@@ -2,4 +2,12 @@
   .bp3-label {
     font-weight: bold;
   }
+
+  // FIXME
+  .EntityViewer {
+    &__property-list-item {
+      background-color: white;
+      border: 0;
+    }
+  }
 }

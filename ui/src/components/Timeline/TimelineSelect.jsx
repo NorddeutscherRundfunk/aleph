@@ -27,17 +27,18 @@ export default class TimelineSelect extends Component {
     const { timelines, handleTimelineSelect, selectedTimeline } = this.props;
     const disabled = timelines.length === 1;
     const filterable = timelines.length > 7;
+    const activeItem = selectedTimeline || timelines[0];
     return (
       <Select
         items={timelines}
         itemRenderer={timelineItemRenderer}
         itemPredicate={itemPredicate}
         onItemSelect={handleTimelineSelect}
-        activeItem={selectedTimeline}
+        activeItem={activeItem}
         filterable={filterable}
       >
         <Button
-          text={timelineLabel(selectedTimeline)}
+          text={timelineLabel(activeItem)}
           rightIcon="double-caret-vertical"
           disabled={disabled}
         />

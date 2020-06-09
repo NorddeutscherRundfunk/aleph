@@ -2,7 +2,6 @@ import React, { lazy } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Button } from '@blueprintjs/core';
 import Query from 'src/app/Query';
 import DefaultViewer from 'src/viewers/DefaultViewer';
 import TableViewer from 'src/viewers/TableViewer';
@@ -11,7 +10,7 @@ import HtmlViewer from 'src/viewers/HtmlViewer';
 import ImageViewer from 'src/viewers/ImageViewer';
 import FolderViewer from 'src/viewers/FolderViewer';
 import EmailViewer from 'src/viewers/EmailViewer';
-import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
+import AddTimelineEvent from 'src/components/Timeline/AddTimelineEvent';
 
 import './DocumentViewMode.scss';
 
@@ -19,20 +18,6 @@ const PdfViewer = lazy(() => import(/* webpackChunkName: 'base' */ 'src/viewers/
 
 
 export class DocumentViewMode extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      addTimelineEventIsOpen: false,
-    };
-    this.toggleAddTimelineEvent = this.toggleAddTimelineEvent.bind(this);
-  }
-
-  toggleAddTimelineEvent() {
-    this.setState(({ addTimelineEventIsOpen }) => ({
-      addTimelineEventIsOpen: !addTimelineEventIsOpen,
-    }));
-  }
-
   renderContent() {
     const { document, queryText, activeMode } = this.props;
     const processingError = document.getProperty('processingError');
@@ -99,7 +84,6 @@ export class DocumentViewMode extends React.Component {
 
   render() {
     const { document, location, activeMode } = this.props;
-    const { addTimelineEventIsOpen } = this.state;
     const canAddTimelineEvent = activeMode === 'view' && location.hash?.indexOf('preview') < 0;
 
     if (document.isPending) {
@@ -108,22 +92,7 @@ export class DocumentViewMode extends React.Component {
 
     return (
       <div className="DocumentViewMode">
-        {canAddTimelineEvent && (
-          <>
-            <Button
-              icon="new-object"
-              text="Add timeline event"
-              className="bp3-button bp3-intent-primary"
-              onClick={this.toggleAddTimelineEvent}
-            />
-            <AddTimelineEventDialog
-              document={document}
-              location={location}
-              toggleDialog={this.toggleAddTimelineEvent}
-              isOpen={addTimelineEventIsOpen}
-            />
-          </>
-        )}
+        {canAddTimelineEvent && <AddTimelineEvent document={document} />}
         {this.renderContent()}
       </div>
     );

@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import { showSuccessToast, showWarningToast } from 'src/app/toast';
-import { updateEntity } from 'src/actions';
+import entityEditorWrapper from 'src/components/Entity/entityEditorWrapper';
 
 import TimelineEventForm from './TimelineEventForm';
 
@@ -53,29 +53,14 @@ export class EditTimelineEventDialog extends Component {
   }
 
   async onSave(data) {
-    const { intl, entity } = this.props;
+    const { intl } = this.props;
     const { blocking } = this.state;
+    const { entity } = data;
     if (blocking) return;
     this.setState({ blocking: true });
 
-    // FIXME ftm implementation?
-    [...entity.properties.keys()].map(prop => { // eslint-disable-line
-      if (prop.name in data) {
-        entity.properties.set(prop, [data[prop.name]]);
-        delete data[prop.name];
-      }
-    });
-    // add remaining data
-    Object.keys(data).map(key => { // eslint-disable-line
-      try {
-        entity.setProperty(key, data[key]);
-      } catch (e) { // schema error
-        console.log(key, data[key], e.message);  // eslint-disable-line
-      }
-    });
-
     try {
-      await this.props.updateEntity({ entity, collectionId: entity.collection.id });
+      await this.props.updateEntity(entity);
       showSuccessToast(intl.formatMessage(messages.save_success));
       this.props.toggleDialog();
     } catch (e) {
@@ -85,14 +70,9 @@ export class EditTimelineEventDialog extends Component {
   }
 
   render() {
-    const { intl, entity, isOpen, toggleDialog } = this.props;
+    const { intl, entity, isOpen, toggleDialog, timeline, entityManager } = this.props;
     const { blocking } = this.state;
 
-    // FIXME
-    const data = {};
-    [...entity.properties.keys()].map(prop => { // eslint-disable-line
-      data[prop.name] = entity.getFirst(prop.name);
-    });
     return (
       <Dialog
         className="EditTimelineEventDialog"
@@ -102,11 +82,13 @@ export class EditTimelineEventDialog extends Component {
         title={intl.formatMessage(messages.title)}
       >
         <div className="bp3-dialog-body">
-          {data && (
+          {entity && (
             <TimelineEventForm
-              data={data}
+              timeline={timeline}
+              entity={entity}
               onSave={this.onSave}
               blocking={blocking}
+              entityManager={entityManager}
             />
           )}
         </div>
@@ -115,7 +97,14 @@ export class EditTimelineEventDialog extends Component {
   }
 }
 
+
+const mapStateToProps = (state, ownProps) => {
+  return { collection: ownProps.entity.collection };
+}
+
+
 export default compose(
-  connect(undefined, { updateEntity }),
+  connect(mapStateToProps),
   injectIntl,
+  entityEditorWrapper,
 )(EditTimelineEventDialog);

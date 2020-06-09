@@ -1,18 +1,11 @@
-// import { Entity } from '@alephdata/followthemoney';
+const getUUID = () => {
+    let dt = new Date().getTime();
+    const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+}
 
-const getEntity = (model, properties, collection, document) => {
-  properties.proof = document.id;
-  const entity = {
-    schema: 'Event',
-    properties,
-    collection,
-  };
-  // const entity = new Entity(model, {
-  //   schema: 'Event',
-  //   properties,
-  //   collection,
-  // });
-  return entity;
-};
-
-export { getEntity };
+export { getUUID };

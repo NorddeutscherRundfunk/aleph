@@ -4,7 +4,7 @@ import {
   defineMessages, FormattedMessage, injectIntl,
 } from 'react-intl';
 import { Waypoint } from 'react-waypoint';
-import { Icon, ButtonGroup, AnchorButton, Tooltip } from '@blueprintjs/core';
+import { Icon, Button, ButtonGroup, AnchorButton, Tooltip } from '@blueprintjs/core';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -23,6 +23,9 @@ import togglePreview from 'src/util/togglePreview';
 
 import TimelineHeading from 'src/components/Timeline/TimelineHeading';
 import TimelineEventTable from 'src/components/Timeline/TimelineEventTable';
+import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
+
+import './TimelineScreenInner.scss';
 
 const messages = defineMessages({
   no_results_title: {
@@ -59,6 +62,7 @@ export class TimelineScreenInner extends React.Component {
     this.state = {
       facets: facetKeys,
       hideFacets: false,
+      addTimelineEventIsOpen: false,
     };
 
     this.updateQuery = this.updateQuery.bind(this);
@@ -70,6 +74,7 @@ export class TimelineScreenInner extends React.Component {
     this.showNextPreview = this.showNextPreview.bind(this);
     this.showPreviousPreview = this.showPreviousPreview.bind(this);
     this.showPreview = this.showPreview.bind(this);
+    this.toggleAddTimelineEvent = this.toggleAddTimelineEvent.bind(this);
   }
 
   componentDidMount() {
@@ -187,9 +192,15 @@ export class TimelineScreenInner extends React.Component {
     this.setState(({ hideFacets }) => ({ hideFacets: !hideFacets }));
   }
 
+  toggleAddTimelineEvent() {
+    this.setState(({ addTimelineEventIsOpen }) => ({
+      addTimelineEventIsOpen: !addTimelineEventIsOpen,
+    }));
+  }
+
   render() {
     const { query, result, intl, timeline, timelineOperations, timelineStatus } = this.props;
-    const { hideFacets, facets } = this.state;
+    const { hideFacets, facets, addTimelineEventIsOpen } = this.state;
     const title = query.getString('q') || intl.formatMessage(messages.page_title);
     const hideFacetsClass = hideFacets ? 'show' : 'hide';
     const plusMinusIcon = hideFacets ? 'minus' : 'plus';
@@ -197,6 +208,7 @@ export class TimelineScreenInner extends React.Component {
     const exportLink = !hasExportLink ? null : result.links.export;
     const tooltip = intl.formatMessage(messages.alert_export_disabled);
     const hideCollection = facets.indexOf('collection_id') < 0;
+    const canAddTimelineEvent = timeline.collection.writeable;
 
     const operation = (
       <>
@@ -250,6 +262,21 @@ export class TimelineScreenInner extends React.Component {
       >
         {breadcrumbs}
         <TimelineHeading timeline={timeline} />
+        {canAddTimelineEvent && (
+          <div className="TimelineScreenInner__add-event-action">
+            <Button
+              icon="new-object"
+              text="Add timeline event"
+              className="bp3-button bp3-intent-primary"
+              onClick={this.toggleAddTimelineEvent}
+            />
+            <AddTimelineEventDialog
+              timeline={timeline}
+              toggleDialog={this.toggleAddTimelineEvent}
+              isOpen={addTimelineEventIsOpen}
+            />
+          </div>
+        )}
         <DualPane className="SearchScreen">
           <DualPane.SidePane>
             <div
