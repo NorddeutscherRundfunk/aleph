@@ -23,6 +23,7 @@ import togglePreview from 'src/util/togglePreview';
 
 import TimelineHeading from 'src/components/Timeline/TimelineHeading';
 import TimelineEventTable from 'src/components/Timeline/TimelineEventTable';
+import DateRangeQuery from 'src/components/Timeline/DateRangeQuery';
 import AddTimelineEventDialog from 'src/components/Timeline/AddTimelineEventDialog';
 
 import './TimelineScreenInner.scss';
@@ -277,6 +278,7 @@ export class TimelineScreenInner extends React.Component {
             />
           </div>
         )}
+        <DateRangeQuery query={query} updateQuery={this.updateQuery} />
         <DualPane className="SearchScreen">
           <DualPane.SidePane>
             <div

@@ -11,13 +11,6 @@ from aleph.index.entities import get_field_type
 log = logging.getLogger(__name__)
 
 
-def convert_filters(filters):
-    ret = []
-    for field, values in filters.items():
-        ret.append(field_filter_query(field, values))
-    return ret
-
-
 class Query(object):
     RESULT_CLASS = SearchQueryResult
     INCLUDE_FIELDS = None

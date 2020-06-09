@@ -125,6 +125,9 @@ def field_filter_query(field, values):
         return {'ids': {'values': values}}
     if field in ['names']:
         field = 'fingerprints'
+    if '__' in field:  # range filter: field__gte, field__lte, ...
+        field, param = field.split('__')
+        return {'range': {field: {param: values[0]}}}
     if len(values) == 1:
         # if field in ['addresses']:
         #     field = '%s.text' % field

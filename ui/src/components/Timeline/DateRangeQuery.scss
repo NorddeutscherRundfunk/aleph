@@ -1,0 +1,14 @@
+@import "src/app/variables.scss";
+
+.DateRangeQuery {
+  padding: $aleph-content-padding;
+
+  &__title {
+    cursor: pointer;
+
+    .bp3-icon {
+      padding-left: 5px;
+    }
+  }
+}
+
