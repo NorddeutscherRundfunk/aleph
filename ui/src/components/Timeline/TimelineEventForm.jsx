@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import queryString from 'query-string';
 import { FormGroup, Button, Intent } from '@blueprintjs/core';
 import { Entity } from '@alephdata/followthemoney';
 import { Property, PropertyEditor } from '@alephdata/vislib';
@@ -85,11 +87,11 @@ const messages = defineMessages({
   },
   label_notes: {
     id: 'timeline.form.label_notes',
-    defaultMessage: 'Other source',
+    defaultMessage: 'Source information',
   },
   help_notes: {
     id: 'timeline.form.help_notes',
-    defaultMessage: 'If now source document, please describe the source.',
+    defaultMessage: 'You can add more information about the source. If now source document, please specify the source.',
   },
   label_keywords: {
     id: 'timeline.form.label_keywords',
@@ -135,17 +137,21 @@ export class TimelineEventForm extends Component {
   constructor(props) {
     super(props);
     const entity = props.entity || new Entity(props.model, initEntity());
-    const { timeline, document } = props;
+    const excludeFields = [];
+    const { timeline, document, location } = props;
     if (document) {
+      // FIXME try to store the source document id
+      // for migration later
+      excludeFields.push('proof');
+      excludeFields.push('sourceUrl');
+      const page = queryString.parse(location.hash).page;
+      entity.setProperty('sourceUrl', document.links.ui + (page ? `#page=${page}` : ''));
+      entity.setProperty('recordId', document.id);
       if (document.collection.id === timeline.collection.id) {
         entity.setProperty('proof', document);
-      } else {
-        // FIXME try to store the source document
-        // for migration later
-        entity.setProperty('recordId', document.id);
       }
     }
-    this.state = { entity };
+    this.state = { entity, excludeFields };
 
     this.onChange = this.onChange.bind(this);
     this.onEditPropertyClick = this.onEditPropertyClick.bind(this);
@@ -157,7 +163,7 @@ export class TimelineEventForm extends Component {
 
     this.propertyFields = {}
     for (let prop of entity.schema.getEditableProperties()) {
-      if (EDITABLE_PROPERTIES.indexOf(prop.name) > -1) {
+      if (EDITABLE_PROPERTIES.indexOf(prop.name) > -1 && excludeFields.indexOf(prop.name) < 0) {
         this.propertyFields[prop.name] = prop
       }
     }
@@ -234,13 +240,16 @@ export class TimelineEventForm extends Component {
 
   render() {
     const { intl, timeline, document } = this.props;
-    const { entity } = this.state;
+    const { entity, excludeFields } = this.state;
 
     const peopleMentioned = document ? [...document.getProperty('peopleMentioned')] : [];
     const companiesMentioned = document ? [...document.getProperty('companiesMentioned')] : [];
     const documentMentions = peopleMentioned.length + companiesMentioned.length;
 
     const renderField = field => {
+      if (excludeFields.indexOf(field) > -1) {
+        return null;
+      }
       const help = messages[`help_${field}`]
       return (
         <FormGroup
@@ -329,5 +338,6 @@ const mapStateToProps = (state, ownProps) => {
 
 export default compose(
   injectIntl,
+  withRouter,
   connect(mapStateToProps),
 )(TimelineEventForm);
