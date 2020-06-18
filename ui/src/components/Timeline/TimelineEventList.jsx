@@ -132,6 +132,7 @@ class TimelineEventList extends Component {
             </h3>
             {SORTABLE_FIELDS.map(field => (
               <SortableField
+                key={field}
                 field={field}
                 handleSort={() => this.sortColumn(field)}
                 sorted={sortedField?.replace('properties.', '') === field
