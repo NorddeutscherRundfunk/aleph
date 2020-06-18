@@ -125,16 +125,16 @@ const EDITABLE_PROPERTIES = [
 ]
 
 
-const emptyEntity = {
+const initEntity = () => ({
   schema: 'Event',
   id: getUUID(),
-};
+});
 
 
 export class TimelineEventForm extends Component {
   constructor(props) {
     super(props);
-    const entity = props.entity || new Entity(props.model, emptyEntity);
+    const entity = props.entity || new Entity(props.model, initEntity());
     const { timeline, document } = props;
     if (document) {
       if (document.collection.id === timeline.collection.id) {
