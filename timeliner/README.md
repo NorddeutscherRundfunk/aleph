@@ -5,7 +5,7 @@
 
 A timeline in Aleph is always based on a collection of data. If you haven't created a collection yourself or haven't been invited to a collection yet, you cannot create a timeline. To create a collection, log into Aleph, choose "personal dataset" and create a new collection via "new dataset". For details see [Aleph's documentation](https://docs.alephdata.org/) for how to get startet, upload data into Aleph and share that data with others.
 
-An empty personal dataset is sufficient to add events to a timeline. However, this is not encouraged, since a timeline event should always be linked to a document, also uploaded to Aleph. The reason behind this document-centered approach: Every element in a timeline needs proof that the event has taken place. Thus, once you're ready to publish, legal personal can vet every step in your documentation. In case you don't have a hard-copy of this event, but know from this, e.g. via at least two independent sources, you can create a memo, upload this into Aleph and then create a timeline event from it. Sounds tedious at first, but in the end you'll be grateful.
+An empty personal dataset is sufficient to add events to a timeline. However, this is not encouraged, since a timeline event should always be linked to a document, also uploaded to Aleph. The reason behind this document-centered approach: Every element in a timeline needs proof that the event has taken place. Thus, once you're ready to publish, legal personal can vet every step in your documentation. In case you don't have a hard-copy of this event, but know from this, e.g. via at least two independent sources, there is a solution for this. However, this is not encouraged.
 
 ### Starting a Timeline
 
@@ -40,32 +40,42 @@ Since Aleph is about collaboration, too, users have access to different data col
 
 # 3. Make Entries to a Timeline
 
-### Add Timeline Events
+### Create Timeline Events basing on a source document
 
 **Work over following part, when this works as intended**:
 
-### Create timeline events from preview
+Using Aleph is like googling: Use the search bar to find documents from different collections. When clicking on a specific document, e.g. text document, pdf, png, spreadsheet, etc., in the search results, Aleph opens a preview window, where you can find an Add timeline event button. For adding an event for that document, choose a timeline to save the event to, followed by a click on the Add timeline button to initiate an input screen. There you can add details for the timeline event. See 4. Fill in the Timeline Event Form
 
-Using Aleph is like googling: Use the search bar to find documents from different collections. In the search results display, Aleph 
+When you access a document not via the search bar, but in your personal dataset, the document will open in full screen mode. This causes Aleph to look slightly different, however, buttons and steps for creating a timeline stays the same as if you'd create a timeline event from a document in the search results.
 
-Choose an object, e.g. document, spreadsheet, etc., in a dataset, click on expand followed by clicking on "Add timeline event". **(NOTE: THE "ADD TIMELINE EVENT" BUTTON SHOULD ALSO BE VISIBILE WITHOUT EXPANDING. THIS NEEDS FIXING. EDIT PREVIOUS SENTENCE WHEN FIXED.)** When users have not yet created a timeline or access to a timeline, this button cannot be activated.
+When users have not yet created a timeline or access to a timeline, this button cannot be activated. Users have to create or be invited to a dataset containing a timeline first.
 
-Once you clicked "Add timeline event", a pop-up windows opens where you can make your timeline entry in following these steps:
+### Create Timeline Events without a Source Document
 
-1. Choose Timeline to add the event to.
-2. Fill in Title and Summary
-3. Choose persons, companies and organisations if applicable. This is optional, but might proof useful later, when using Aleph's [entity extraction engine](https://docs.alephdata.org/developers/technical-faq#how-does-aleph-extract-named-entities-from-text).
-4. Pick a date, date range or less accurate time stamp like month and year if you don't know the specific date.
-5. Flag this entry as important if applicable.
+Despite not being the desired way of creating timeline events in Aleph, it is possible to create an event without a source document as proof. Navigate to a timeline and click on the Add timeline button there. This will give you the additional option to add a specific source link, e.g. to a web site, in the input screen.
+
+
+# 4. Fill in the Timeline Event Form
+
+Once you clicked "Add timeline event", a pop-up windows opens where you can make your timeline entry using the following fields:
+
+
+1. Add an Event Title and Summary
+2. Choose persons, companies and organisations if applicable. This is optional, but might proof useful later, when using Aleph's [entity extraction engine](https://docs.alephdata.org/developers/technical-faq#how-does-aleph-extract-named-entities-from-text).
+3. Add involved persons, companies and organisations.
+4. Add location and country.
+5. Use the toggle switch to choose between single date and a date range when the event has occured.
+6. Add single date or date range. Aleph can handle dates, but it also works with month and year or just the year, if you don't know the specific date.
+7. Add further information to the source. This may be especially useful, when users create a timeline event without a source document.
+8. Add Keywords.
+9. Flag this entry as important if applicable.
+10. Save the event
 
 ### Edit Timeline Events
 
-Navigate to a timeline containing the event you want to edit, open the timeline and click on the pencil button for the specific event, make desired changes, save changes.
+Navigate to a timeline containing the event you want to edit, open the timeline and click on the pencil button for the specific event, make changes, save changes.
 
-# 4. Searching for Timeline Events in Aleph
+# 5. Searching for Timeline Events in Aleph
 
 Since timeline events work as any other document in Aleph they are registered by and diplayed in search queries.
-
-
-# ? Shortcuts?
 
