@@ -182,9 +182,9 @@ export class TimelineEventForm extends Component {
   }
 
   handleBoolChange({ target }) {
-    const data = this.state;
-    data[target.id] = target.checked ? 'true' : 'false'; // FIXME schema boolean implementation
-    this.setState(data);
+    const { entity } = this.state;
+    entity.setProperty(target.id, target.checked ? 'true' : 'false'); // FIXME schema boolean implementation
+    this.setState({ entity });
   }
 
   handleDateRangeChange({ date, startDate, endDate }) {
@@ -195,9 +195,9 @@ export class TimelineEventForm extends Component {
   }
 
   handleMentionedChange(prefix, mentioned) {
-    const data = this.state;
-    data[`${prefix}Mentioned`] = mentioned;
-    this.setState(data);
+    const { entity } = this.state;
+    entity.setProperty(`${prefix}Mentioned`, mentioned)
+    this.setState({ entity });
   }
 
   renderProperty(key) {
@@ -318,7 +318,6 @@ export class TimelineEventForm extends Component {
         {renderField('sourceUrl')}
         {renderField('notes')}
         {renderField('keywords')}
-        {renderField('important')}
         <Button
           intent={Intent.PRIMARY}
           onClick={this.onSave}

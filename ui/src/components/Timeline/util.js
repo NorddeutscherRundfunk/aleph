@@ -8,4 +8,4 @@ const getUUID = () => {
   return uuid;
 };
 
-export {getUUID};
+export { getUUID };
