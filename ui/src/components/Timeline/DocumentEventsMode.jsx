@@ -58,6 +58,7 @@ export class TimelineEventsMode extends React.Component {
           updateQuery={this.updateQuery}
           result={result}
           hideCollection={false}
+          editable={false}
         />
         {result.total === 0 && (
           <ErrorSection

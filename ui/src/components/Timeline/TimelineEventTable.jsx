@@ -77,7 +77,7 @@ class TimelineEventTable extends Component {
   }
 
   render() {
-    const { query, intl, location, result } = this.props;
+    const { query, intl, location, result, editable } = this.props;
     const { hideCollection = false, showPreview = true } = this.props;
     const { updateSelection, selection } = this.props;
     const { editIsOpen, editEntity } = this.state;
@@ -130,7 +130,7 @@ class TimelineEventTable extends Component {
               <TH className="header-dates" field="endDate" sortable />
               <TH className="header-dates" field="dates" sortable />
               <TH className="header-important" field="important" sortable />
-              <th className="header-edit" />
+              {editable && <th className="header-edit" />}
             </tr>
           </thead>
           <tbody className={c({ updating: result.isLoading })}>
@@ -144,6 +144,7 @@ class TimelineEventTable extends Component {
                 updateSelection={updateSelection}
                 selection={selection}
                 handleEdit={() => this.toggleEditTimelineEvent(entity)}
+                editable={editable}
               />
             ))}
           </tbody>
