@@ -59,7 +59,7 @@ export class AddTimelineEventDialog extends Component {
   }
 
   render() {
-    const { intl, document, isOpen, toggleDialog, timeline, entityManager } = this.props;
+    const { intl, isOpen, toggleDialog, timeline, entityManager } = this.props;
     const { blocking } = this.state;
     return (
       <Dialog
@@ -72,7 +72,6 @@ export class AddTimelineEventDialog extends Component {
         <div className="bp3-dialog-body">
           <TimelineEventForm
             timeline={timeline}
-            document={document}
             onSave={this.onSave}
             blocking={blocking}
             entityManager={entityManager}

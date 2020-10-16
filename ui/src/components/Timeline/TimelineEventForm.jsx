@@ -4,15 +4,14 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import queryString from 'query-string';
-import { FormGroup, Button, Intent } from '@blueprintjs/core';
+import { FormGroup, Button, Intent, Checkbox } from '@blueprintjs/core';
 import { Entity } from '@alephdata/followthemoney';
 import { Property, PropertyEditor } from '@alephdata/vislib';
 import c from 'classnames';
 import { selectModel } from 'src/selectors';
 
-import TimelineEventInvolvedEntities from './TimelineEventInvolvedEntities';
 import TimelineEventDatePicker from './TimelineEventDatePicker';
-import { getUUID } from './util';
+import { getUUID, toBool } from './util';
 
 import './TimelineEventForm.scss';
 
@@ -52,14 +51,6 @@ const messages = defineMessages({
   label_important_checkbox: {
     id: 'timeline.form.label_important_checkbox',
     defaultMessage: 'Indicate that this is a special entry',
-  },
-  label_mentioned: {
-    id: 'timeline.form.label_mentioned',
-    defaultMessage: 'Mentioned persons, companies and organisations',
-  },
-  help_mentioned: {
-    id: 'timeline.form.help_mentioned',
-    defaultMessage: 'Click on the items to select or deselect them. Selected items appear blue.',
   },
   label_involved: {
     id: 'timeline.form.label_involved',
@@ -117,8 +108,6 @@ const EDITABLE_PROPERTIES = [
   'location',
   'country',
   'involved',
-  'peopleMentioned',
-  'companiesMentioned',
   'proof',
   'sourceUrl',
   'notes',
@@ -158,7 +147,6 @@ export class TimelineEventForm extends Component {
     this.onSave = () => this.props.onSave(this.state);
     this.handleBoolChange = this.handleBoolChange.bind(this);
     this.handleDateRangeChange = this.handleDateRangeChange.bind(this);
-    this.handleMentionedChange = this.handleMentionedChange.bind(this);
     this.renderProperty = this.renderProperty.bind(this);
 
     this.propertyFields = {}
@@ -183,7 +171,12 @@ export class TimelineEventForm extends Component {
 
   handleBoolChange({ target }) {
     const { entity } = this.state;
-    entity.setProperty(target.id, target.checked ? 'true' : 'false'); // FIXME schema boolean implementation
+    for (let prop of entity.properties) {
+      if (prop[0].name === target.id) {
+        while (prop[1].length) prop[1].pop() // FIXME multi valued properties
+      }
+    }
+    entity.setProperty(target.id, target.checked ? 'true': 'false')
     this.setState({ entity });
   }
 
@@ -192,12 +185,6 @@ export class TimelineEventForm extends Component {
     // set date to empty when we have a range
     if (startDate) this.setState({ startDate, date });
     if (endDate) this.setState({ endDate, date });
-  }
-
-  handleMentionedChange(prefix, mentioned) {
-    const { entity } = this.state;
-    entity.setProperty(`${prefix}Mentioned`, mentioned)
-    this.setState({ entity });
   }
 
   renderProperty(key) {
@@ -239,12 +226,8 @@ export class TimelineEventForm extends Component {
   }
 
   render() {
-    const { intl, timeline, document } = this.props;
+    const { intl, timeline } = this.props;
     const { entity, excludeFields } = this.state;
-
-    const peopleMentioned = document ? [...document.getProperty('peopleMentioned')] : [];
-    const companiesMentioned = document ? [...document.getProperty('companiesMentioned')] : [];
-    const documentMentions = peopleMentioned.length + companiesMentioned.length;
 
     const renderField = field => {
       if (excludeFields.indexOf(field) > -1) {
@@ -281,25 +264,6 @@ export class TimelineEventForm extends Component {
         >
           {this.renderProperty('summary')}
         </FormGroup>
-        {documentMentions > 0 && (
-          <FormGroup
-            label={intl.formatMessage(messages.label_mentioned)}
-            labelFor="event-involved"
-            helperText={intl.formatMessage(messages.help_mentioned)}
-          >
-            <TimelineEventInvolvedEntities
-              selectedEntities={[...entity.getProperty('peopleMentioned')] || []}
-              entities={peopleMentioned}
-              onChange={(selected) => this.handleMentionedChange('people', selected)}
-            />
-            <TimelineEventInvolvedEntities
-              selectedEntities={[...entity.getProperty('companiesMentioned')] || []}
-              entities={companiesMentioned}
-              onChange={(selected) => this.handleMentionedChange('companies', selected)}
-            />
-          </FormGroup>
-        )}
-        {renderField('involved')}
         {renderField('location')}
         {renderField('country')}
         <FormGroup
@@ -313,11 +277,23 @@ export class TimelineEventForm extends Component {
             renderProperty={this.renderProperty}
             onChange={this.onChange}
           />
+            </FormGroup>
+            {renderField('involved')}
+            {renderField('proof')}
+            {renderField('sourceUrl')}
+            {renderField('notes')}
+            {renderField('keywords')}
+            <FormGroup
+              label={intl.formatMessage(messages.label_important)}
+              labelFor="important"
+              >
+              <Checkbox
+                id="important"
+                checked={toBool(entity.getProperty('important')[0])}
+                label={intl.formatMessage(messages.label_important_checkbox)}
+                onChange={this.handleBoolChange}
+            />
         </FormGroup>
-        {renderField('proof')}
-        {renderField('sourceUrl')}
-        {renderField('notes')}
-        {renderField('keywords')}
         <Button
           intent={Intent.PRIMARY}
           onClick={this.onSave}

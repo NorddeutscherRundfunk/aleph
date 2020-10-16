@@ -8,4 +8,6 @@ const getUUID = () => {
   return uuid;
 };
 
-export { getUUID };
+const toBool = value => [1, true, '1', 'true', 'yes'].indexOf(value) > -1
+
+export { getUUID, toBool };
