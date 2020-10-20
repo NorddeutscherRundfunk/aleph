@@ -36,6 +36,7 @@ export default class TimelineSelect extends Component {
         onItemSelect={handleTimelineSelect}
         activeItem={activeItem}
         filterable={filterable}
+        popoverProps={{ usePortal: false }}
       >
         <Button
           text={timelineLabel(activeItem)}
