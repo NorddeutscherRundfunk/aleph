@@ -60,16 +60,13 @@ export class AddTimelineEvent extends React.PureComponent {
   render() {
     const { intl, document, timelines } = this.props;
     const writeableTimelines = timelines.results.filter(t => t.writeable);
-    const { timeline = writeableTimelines[0], dialogIsOpen } = this.state;
+    let { timeline, dialogIsOpen } = this.state;
+    if (writeableTimelines.length === 1) {
+      timeline = writeableTimelines[0];
+    }
 
     return (
       <>
-        <Button
-          icon="new-object"
-          text={intl.formatMessage(messages.button_label)}
-          className="bp3-button bp3-intent-primary"
-          onClick={this.toggleDialog}
-        />
         {writeableTimelines.length > 0 ? (
           <>
             <TimelineSelect
@@ -88,10 +85,17 @@ export class AddTimelineEvent extends React.PureComponent {
             )}
           </>
         ) : (
-          <span className="AddTimelineEvent__no-timelines">
+          <p className="AddTimelineEvent__no-timelines">
             {intl.formatMessage(messages.no_timelines)}
-          </span>
+          </p>
         )}
+        <Button
+          icon="new-object"
+          text={intl.formatMessage(messages.button_label)}
+          className="bp3-button bp3-intent-primary"
+          onClick={this.toggleDialog}
+          disabled={!timeline}
+        />
       </>
     );
   }

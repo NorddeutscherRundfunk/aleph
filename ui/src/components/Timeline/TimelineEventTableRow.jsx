@@ -21,7 +21,7 @@ class TimelineEventTableRow extends Component {
   }
 
   render() {
-    const { entity, location } = this.props;
+    const { entity, location, editable } = this.props;
     const { hideCollection, showPreview } = this.props;
     const { updateSelection, selection } = this.props;
     const selectedIds = _.map(selection || [], 'id');
@@ -78,9 +78,11 @@ class TimelineEventTableRow extends Component {
           <td className="important">
             <Boolean value={important} />
           </td>
-          <td className="edit">
-            {this.renderEditButton()}
-          </td>
+          {editable && (
+            <td className="edit">
+              {this.renderEditButton()}
+            </td>
+          )}
         </tr>
         {highlights.length ? (
           <tr key={`${entity.id}-hl`} className={highlightsClass}>

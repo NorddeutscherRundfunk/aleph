@@ -59,7 +59,7 @@ export class AddTimelineEventDialog extends Component {
   }
 
   render() {
-    const { intl, document, isOpen, toggleDialog, timeline, entityManager } = this.props;
+    const { intl, isOpen, toggleDialog, timeline, entityManager, document } = this.props;
     const { blocking } = this.state;
     return (
       <Dialog
